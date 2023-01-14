@@ -1,0 +1,70 @@
+<?php
+declare(strict_types=1);
+
+namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+
+use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
+use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
+use Stringable;
+use function array_key_exists;
+
+class LoxInstance implements Stringable
+{
+    /**
+     * LoxInstance constructor.
+     *
+     * @param LoxClass             $class
+     * @param array<string, mixed> $properties
+     */
+    public function __construct(readonly private LoxClass $class, private array $properties = [])
+    {
+    }
+
+    /**
+     * Get property value.
+     *
+     * @param TokenInterface $name
+     *
+     * @return mixed
+     * @throws RuntimeError
+     */
+    public function get(TokenInterface $name): mixed
+    {
+        $lexeme = $name->getLexeme();
+        if (array_key_exists($lexeme, $this->properties)) {
+            return $this->properties[$lexeme];
+        }
+
+        $method = $this->class->findMethod($lexeme);
+        if ($method) {
+            return $method->bind($this);
+        }
+
+        throw new RuntimeError(
+            sprintf("Undefined property '%s'.", $lexeme),
+            $name->getLine(),
+            $name->getColumn()
+        );
+    }
+
+    /**
+     * Set property value.
+     *
+     * @param TokenInterface $name
+     * @param mixed          $value
+     *
+     * @return void
+     */
+    public function set(TokenInterface $name, mixed $value): void
+    {
+        $this->properties[$name->getLexeme()] = $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString(): string
+    {
+        return sprintf("<instance %s>", $this->class);
+    }
+}

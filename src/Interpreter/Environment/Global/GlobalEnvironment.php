@@ -55,7 +55,7 @@ class GlobalEnvironment implements EnvironmentInterface
     {
         $lexeme = $name->getLexeme();
         if (array_key_exists($lexeme, $this->values)) {
-            $this->values[$lexeme] = $value;
+            $this->values[(string)$lexeme] = $value;
         } elseif ($this->enclosing) {
             $this->enclosing->assign($name, $value);
         } else {

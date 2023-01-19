@@ -57,7 +57,7 @@ class LoxInstance implements Stringable
      */
     public function set(TokenInterface $name, mixed $value): void
     {
-        $this->properties[$name->getLexeme()] = $value;
+        $this->properties[(string)$name->getLexeme()] = $value;
     }
 
     /**

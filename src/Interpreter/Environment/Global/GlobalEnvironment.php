@@ -1,28 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Environment;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Environment\Global;
 
+use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use function array_key_exists;
 
-class Environment implements EnvironmentInterface
+class GlobalEnvironment implements EnvironmentInterface
 {
-    /**
-     * Environment values.
-     *
-     * @var array<string, mixed>
-     */
-    public array $values = [];
-
     /**
      * Environment constructor.
      *
      * @param EnvironmentInterface|null $enclosing
+     * @param array<string, mixed>      $values
      */
-    public function __construct(readonly private ?EnvironmentInterface $enclosing = null)
-    {
+    public function __construct(
+        readonly private ?EnvironmentInterface $enclosing = null,
+        protected array                        $values = []
+    ) {
     }
 
     /**
@@ -32,19 +29,23 @@ class Environment implements EnvironmentInterface
     {
         if (array_key_exists($name, $this->values)) {
             return $this->values[$name];
-        } elseif ($this->enclosing) {
-            return $this->enclosing->get($name);
-        } else {
-            throw new RuntimeError("Undefined variable '" . $name . "'.", 0, 0);
         }
+
+        if ($this->enclosing) {
+            return $this->enclosing->get($name);
+        }
+
+        throw new RuntimeError("Undefined variable '" . $name . "'.", 0, 0);
     }
 
     /**
      * @inheritDoc
      */
-    public function define(string $name, mixed $value): void
+    public function define(string $name, mixed $value): EnvironmentInterface
     {
         $this->values[$name] = $value;
+
+        return $this;
     }
 
     /**

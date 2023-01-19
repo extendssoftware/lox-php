@@ -7,8 +7,9 @@ use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxCallableInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxClass;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxInstance;
-use ExtendsSoftware\LoxPHP\Interpreter\Environment\Environment;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\Environment\Global\GlobalEnvironment;
+use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
@@ -63,7 +64,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      * @param resource             $stream
      */
     public function __construct(
-        private readonly EnvironmentInterface $globals = new Environment(),
+        private readonly EnvironmentInterface $globals = new GlobalEnvironment(),
         mixed                                 $stream = null
     ) {
         $stream = $stream ?: fopen('php://stdout', 'w');
@@ -303,7 +304,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitBlockStatement(BlockStatement $statement): mixed
     {
-        $this->executeBlock($statement->getStatements(), new Environment($this->environment));
+        $this->executeBlock($statement->getStatements(), new LocalEnvironment($this->environment));
 
         return null;
     }
@@ -324,11 +325,11 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         $classLexeme = $statement->getName()->getLexeme();
-        $this->environment->define($classLexeme, null);
+        $this->environment = $this->environment->define($classLexeme, null);
 
         if ($superclass) {
-            $this->environment = new Environment($this->environment);
-            $this->environment->define('super', $superclass);
+            $this->environment = new LocalEnvironment($this->environment);
+            $this->environment = $this->environment->define('super', $superclass);
         }
 
         $methods = [];
@@ -367,7 +368,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     public function visitFunctionStatement(FunctionStatement $statement): mixed
     {
         $function = new LoxFunction($statement, $this->environment, false);
-        $this->environment->define($statement->getName()->getLexeme(), $function);
+        $this->environment = $this->environment->define($statement->getName()->getLexeme(), $function);
 
         return null;
     }
@@ -411,7 +412,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitVariableStatement(VariableStatement $statement): mixed
     {
-        $this->environment->define(
+        $this->environment = $this->environment->define(
             $statement->getName()->getLexeme(),
             $statement->getInitializer()?->accept($this)
         );

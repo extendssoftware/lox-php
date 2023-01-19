@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
 
-use ExtendsSoftware\LoxPHP\Interpreter\Environment\Environment;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\ReturnValue;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
@@ -32,9 +32,9 @@ class LoxFunction implements LoxCallableInterface
      */
     public function call(InterpreterInterface $interpreter, array $arguments): mixed
     {
-        $environment = new Environment($this->closure);
+        $environment = new LocalEnvironment($this->closure);
         foreach ($this->declaration->getParameters() as $index => $parameter) {
-            $environment->define($parameter->getLexeme(), $arguments[$index]);
+            $environment = $environment->define($parameter->getLexeme(), $arguments[$index]);
         }
 
         try {
@@ -80,9 +80,10 @@ class LoxFunction implements LoxCallableInterface
      */
     public function bind(LoxInstance $instance): LoxFunction
     {
-        $environment = new Environment($this->closure);
-        $environment->define('this', $instance);
-
-        return new LoxFunction($this->declaration, $environment, $this->isInitializer);
+        return new LoxFunction(
+            $this->declaration,
+            (new LocalEnvironment($this->closure))->define('this', $instance),
+            $this->isInitializer
+        );
     }
 }

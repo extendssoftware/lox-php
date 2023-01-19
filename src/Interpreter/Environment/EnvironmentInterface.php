@@ -24,9 +24,9 @@ interface EnvironmentInterface
      * @param string $name
      * @param mixed  $value
      *
-     * @return void
+     * @return EnvironmentInterface
      */
-    public function define(string $name, mixed $value): void;
+    public function define(string $name, mixed $value): EnvironmentInterface;
 
     /**
      * Assign existing environment variable.

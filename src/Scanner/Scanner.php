@@ -141,9 +141,6 @@ class Scanner implements ScannerInterface
             case '*':
                 $this->addToken(TokenType::STAR);
                 break;
-            case '~':
-                $this->addToken(TokenType::TILDE);
-                break;
             case '!':
                 $this->addToken($this->match('=') ? TokenType::BANG_EQUAL : TokenType::BANG);
                 break;
@@ -208,7 +205,7 @@ class Scanner implements ScannerInterface
 
                     $this->addToken(
                         TokenType::NUMBER,
-                        $this->getSubstring($this->start, $this->position)
+                        (float)$this->getSubstring($this->start, $this->position)
                     );
                 } elseif (ctype_alpha($character)) {
                     while (ctype_alnum($this->current()) || $this->current() === '_') {
@@ -228,12 +225,12 @@ class Scanner implements ScannerInterface
     /**
      * Add token.
      *
-     * @param TokenType   $type
-     * @param string|null $lexeme
+     * @param TokenType $type
+     * @param mixed     $lexeme
      *
      * @return void
      */
-    private function addToken(TokenType $type, string $lexeme = null): void
+    private function addToken(TokenType $type, mixed $lexeme = null): void
     {
         $this->tokens[] = new Token(
             $type,

@@ -566,7 +566,7 @@ class Parser implements ParserInterface
     private function term(): ExpressionInterface
     {
         $expression = $this->factor();
-        while ($this->match(TokenType::MINUS, TokenType::PLUS, TokenType::TILDE)) {
+        while ($this->match(TokenType::MINUS, TokenType::PLUS)) {
             $expression = new BinaryExpression($expression, $this->previous(), $this->factor());
         }
 

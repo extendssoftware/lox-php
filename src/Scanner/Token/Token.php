@@ -14,13 +14,13 @@ class Token implements TokenInterface
      * @param TokenType $type
      * @param int       $line
      * @param int       $column
-     * @param string    $lexeme
+     * @param mixed     $lexeme
      */
     public function __construct(
         private readonly TokenType $type,
         private readonly int       $line,
         private readonly int       $column,
-        private readonly string    $lexeme
+        private readonly mixed     $lexeme
     ) {
     }
 
@@ -51,7 +51,7 @@ class Token implements TokenInterface
     /**
      * @inheritDoc
      */
-    public function getLexeme(): string
+    public function getLexeme(): mixed
     {
         return $this->lexeme;
     }

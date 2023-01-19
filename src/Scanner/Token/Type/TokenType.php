@@ -17,7 +17,6 @@ enum TokenType
     case SEMICOLON;
     case SLASH;
     case STAR;
-    case TILDE;
 
     // One or two character tokens.
     case BANG;

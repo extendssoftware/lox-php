@@ -33,11 +33,13 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
+use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use TypeError;
 use function count;
 use function fwrite;
 use function gettype;
+use function is_float;
 use function is_resource;
 use function sprintf;
 
@@ -130,20 +132,60 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $right = $expression->getRight()->accept($this);
         $operator = $expression->getOperator();
 
-        return match ($operator->getType()) {
-            TokenType::GREATER => $left > $right,
-            TokenType::GREATER_EQUAL => $left >= $right,
-            TokenType::LESS => $left < $right,
-            TokenType::LESS_EQUAL => $left <= $right,
-            TokenType::BANG_EQUAL => $left != $right,
-            TokenType::EQUAL_EQUAL => $left == $right,
-            TokenType::MINUS => $left - $right,
-            TokenType::PLUS => $left + $right,
-            TokenType::SLASH => $left / $right,
-            TokenType::STAR => $left * $right,
-            TokenType::TILDE => $left . $right,
-            default => null,
-        };
+        switch ($operator->getType()) {
+            case TokenType::GREATER:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left > $right;
+            case TokenType::GREATER_EQUAL:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left >= $right;
+            case TokenType::LESS:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left < $right;
+            case TokenType::LESS_EQUAL:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left <= $right;
+            case TokenType::BANG_EQUAL:
+                return $left != $right;
+            case TokenType::EQUAL_EQUAL:
+                return $left == $right;
+            case TokenType::MINUS:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left - $right;
+            case TokenType::PLUS:
+                if (is_float($left) && is_float($right)) {
+                    return $left + $right;
+                }
+
+                if (is_string($left) && is_string($right)) {
+                    return $left . $right;
+                }
+
+                throw new RuntimeError(
+                    'Operands must be two numbers or two strings.',
+                    $operator->getLine(),
+                    $operator->getColumn()
+                );
+            case TokenType::SLASH:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                if ($right === 0.0) {
+                    throw new RuntimeError("Can't divide by zero.", $operator->getLine(), $operator->getColumn());
+                }
+
+                return $left / $right;
+            case TokenType::STAR:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return $left * $right;
+            default:
+                return null;
+        }
     }
 
     /**
@@ -282,11 +324,16 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $right = $expression->getRight()->accept($this);
         $operator = $expression->getOperator();
 
-        return match ($operator->getType()) {
-            TokenType::BANG => !$right,
-            TokenType::MINUS => -$right,
-            default => null,
-        };
+        switch ($operator->getType()) {
+            case TokenType::BANG:
+                return !$right;
+            case TokenType::MINUS:
+                $this->checkNumberOperand($operator, $right);
+
+                return -$right;
+            default:
+                return null;
+        }
     }
 
 
@@ -335,7 +382,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $methods = [];
         foreach ($statement->getMethods() as $method) {
             $methodLexeme = $method->getName()->getLexeme();
-            $methods[$methodLexeme] = new LoxFunction($method, $this->environment, $methodLexeme === 'init');
+            $methods[(string)$methodLexeme] = new LoxFunction($method, $this->environment, $methodLexeme === 'init');
         }
 
         $class = new LoxClass($classLexeme, $superclass, $methods);
@@ -392,7 +439,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitPrintStatement(PrintStatement $statement): mixed
     {
-        fwrite($this->stream, $statement->getExpression()->accept($this) . PHP_EOL);
+        fwrite($this->stream, $this->stringify($statement->getExpression()->accept($this)) . PHP_EOL);
 
         return null;
     }
@@ -430,5 +477,55 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         return null;
+    }
+
+    /**
+     * Check if right hand side is a number.
+     *
+     * @param TokenInterface $operator
+     * @param mixed          $operand
+     *
+     * @return void
+     * @throws RuntimeError
+     */
+    private function checkNumberOperand(TokenInterface $operator, mixed $operand): void
+    {
+        if (!is_float($operand)) {
+            throw new RuntimeError('Operand must be a number.', $operator->getLine(), $operator->getColumn());
+        }
+    }
+
+    /**
+     * Check if right hand side is a number.
+     *
+     * @param TokenInterface $operator
+     * @param mixed          $left
+     * @param mixed          $right
+     *
+     * @return void
+     * @throws RuntimeError
+     */
+    private function checkNumberOperands(TokenInterface $operator, mixed $left, mixed $right): void
+    {
+        if (!is_float($left) || !is_float($right)) {
+            throw new RuntimeError('Operands must be numbers.', $operator->getLine(), $operator->getColumn());
+        }
+    }
+
+    /**
+     * Stringify value.
+     *
+     * @param mixed $value
+     *
+     * @return string
+     */
+    private function stringify(mixed $value): string
+    {
+        return match ($value) {
+            null => 'nil',
+            true => 'true',
+            false => 'false',
+            default => (string)$value,
+        };
     }
 }

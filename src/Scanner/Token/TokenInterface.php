@@ -32,7 +32,7 @@ interface TokenInterface extends Stringable
     /**
      * Get lexeme.
      *
-     * @return string
+     * @return mixed
      */
-    public function getLexeme(): string;
+    public function getLexeme(): mixed;
 }

@@ -10,7 +10,6 @@ use ExtendsSoftware\LoxPHP\Resolver\Resolver;
 use ExtendsSoftware\LoxPHP\Resolver\ResolverInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Scanner;
 use ExtendsSoftware\LoxPHP\Scanner\ScannerInterface;
-use function fopen;
 
 class Lox implements LoxInterface
 {

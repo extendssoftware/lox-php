@@ -166,7 +166,7 @@ class Scanner implements ScannerInterface
                     // Consume asterisk slash for comment.
                     $this->consume();
 
-                    // A multi line comment goes until the closing asterisk + forward slash combination.
+                    // A multiline comment goes until the closing asterisk + forward slash combination.
                     while (!($this->match('*') && $this->match('/')) && $this->hasMore()) {
                         $this->consume();
                     }

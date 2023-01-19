@@ -158,9 +158,21 @@ class Scanner implements ScannerInterface
                     // Consume second slash for comment.
                     $this->consume();
 
-                    // A comment goes until the end of the line. Ignore comment.
+                    // A single line comment goes until the end of the line.
                     while ($this->current() !== "\n" && $this->hasMore()) {
                         $this->consume();
+                    }
+                } elseif ($this->match('*')) {
+                    // Consume asterisk slash for comment.
+                    $this->consume();
+
+                    // A multi line comment goes until the closing asterisk + forward slash combination.
+                    while (!($this->match('*') && $this->match('/')) && $this->hasMore()) {
+                        $this->consume();
+                    }
+
+                    if (!$this->hasMore()) {
+                        throw new SyntaxError('Unterminated comment', $this->line, $this->column);
                     }
                 } else {
                     $this->addToken(TokenType::SLASH);

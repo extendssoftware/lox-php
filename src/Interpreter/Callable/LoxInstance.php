@@ -7,16 +7,17 @@ use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use Stringable;
 use function array_key_exists;
+use function sprintf;
 
 class LoxInstance implements Stringable
 {
     /**
      * LoxInstance constructor.
      *
-     * @param LoxClass             $class
+     * @param LoxClass|null        $class
      * @param array<string, mixed> $properties
      */
-    public function __construct(readonly private LoxClass $class, private array $properties = [])
+    public function __construct(readonly private ?LoxClass $class = null, private array $properties = [])
     {
     }
 
@@ -35,7 +36,7 @@ class LoxInstance implements Stringable
             return $this->properties[$lexeme];
         }
 
-        $method = $this->class->findMethod($lexeme);
+        $method = $this->class?->findMethod($lexeme);
         if ($method) {
             return $method->bind($this);
         }

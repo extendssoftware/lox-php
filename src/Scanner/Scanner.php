@@ -218,7 +218,7 @@ class Scanner implements ScannerInterface
 
                     $this->addToken(
                         TokenType::NUMBER,
-                        (float)$this->getSubstring($this->start, $this->position)
+                        $this->getSubstring($this->start, $this->position)
                     );
                 } elseif (ctype_alpha($character)) {
                     while (ctype_alnum($this->current()) || $this->current() === '_') {

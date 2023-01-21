@@ -247,7 +247,13 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitLiteralExpression(LiteralExpression $expression): mixed
     {
-        return $expression->getValue();
+        $value = $expression->getValue();
+
+        return match ($expression->getType()) {
+            TokenType::STRING => (string)$value,
+            TokenType::NUMBER => (float)$value,
+            default => $value,
+        };
     }
 
     /**

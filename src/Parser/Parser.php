@@ -342,7 +342,7 @@ class Parser implements ParserInterface
         }
 
         if (!$condition) {
-            $condition = new LiteralExpression(true);
+            $condition = new LiteralExpression(TokenType::TRUE, true);
         }
 
         $body = new WhileStatement($condition, $body);
@@ -671,19 +671,23 @@ class Parser implements ParserInterface
     private function primary(): ExpressionInterface
     {
         if ($this->match(TokenType::FALSE)) {
-            return new LiteralExpression(false);
+            return new LiteralExpression(TokenType::FALSE, false);
         }
 
         if ($this->match(TokenType::TRUE)) {
-            return new LiteralExpression(true);
+            return new LiteralExpression(TokenType::TRUE, true);
         }
 
         if ($this->match(TokenType::NIL)) {
-            return new LiteralExpression(null);
+            return new LiteralExpression(TokenType::NIL, null);
         }
 
-        if ($this->match(TokenType::NUMBER, TokenType::STRING)) {
-            return new LiteralExpression($this->previous()->getLexeme());
+        if ($this->match(TokenType::NUMBER)) {
+            return new LiteralExpression(TokenType::NUMBER, $this->previous()->getLexeme());
+        }
+
+        if ($this->match(TokenType::STRING)) {
+            return new LiteralExpression(TokenType::STRING, $this->previous()->getLexeme());
         }
 
         if ($this->match(TokenType::SUPER)) {

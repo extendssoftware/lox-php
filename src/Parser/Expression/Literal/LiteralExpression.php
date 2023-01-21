@@ -5,15 +5,17 @@ namespace ExtendsSoftware\LoxPHP\Parser\Expression\Literal;
 
 use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
+use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 
 class LiteralExpression implements ExpressionInterface
 {
     /**
      * LiteralExpression constructor.
      *
-     * @param mixed $value
+     * @param TokenType $type
+     * @param mixed     $value
      */
-    public function __construct(private readonly mixed $value)
+    public function __construct(private readonly TokenType $type, private readonly mixed $value)
     {
     }
 
@@ -23,6 +25,16 @@ class LiteralExpression implements ExpressionInterface
     public function accept(VisitorInterface $visitor): mixed
     {
         return $visitor->visitLiteralExpression($this);
+    }
+
+    /**
+     * Get token type.
+     *
+     * @return TokenType
+     */
+    public function getType(): TokenType
+    {
+        return $this->type;
     }
 
     /**

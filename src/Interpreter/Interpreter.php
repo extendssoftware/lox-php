@@ -3,10 +3,15 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxBoolean;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxCallableInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxClass;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxInstance;
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxLiteral;
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxNull;
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxNumber;
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxString;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Global\GlobalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
@@ -36,10 +41,8 @@ use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use TypeError;
-use function count;
+use function fopen;
 use function fwrite;
-use function gettype;
-use function is_float;
 use function is_resource;
 use function sprintf;
 
@@ -126,7 +129,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitBinaryExpression(BinaryExpression $expression): mixed
+    public function visitBinaryExpression(BinaryExpression $expression): LoxLiteral
     {
         $left = $expression->getLeft()->accept($this);
         $right = $expression->getRight()->accept($this);
@@ -136,34 +139,34 @@ class Interpreter implements InterpreterInterface, VisitorInterface
             case TokenType::GREATER:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left > $right;
+                return new LoxBoolean($left->getValue() > $right->getValue());
             case TokenType::GREATER_EQUAL:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left >= $right;
+                return new LoxBoolean($left->getValue() >= $right->getValue());
             case TokenType::LESS:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left < $right;
+                return new LoxBoolean($left->getValue() < $right->getValue());
             case TokenType::LESS_EQUAL:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left <= $right;
+                return new LoxBoolean($left->getValue() <= $right->getValue());
             case TokenType::BANG_EQUAL:
-                return $left != $right;
+                return new LoxBoolean($left->getValue() != $right->getValue());
             case TokenType::EQUAL_EQUAL:
-                return $left == $right;
+                return new LoxBoolean($left->getValue() == $right->getValue());
             case TokenType::MINUS:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left - $right;
+                return new LoxNumber($left->getValue() - $right->getValue());
             case TokenType::PLUS:
-                if (is_float($left) && is_float($right)) {
-                    return $left + $right;
+                if ($left instanceof LoxNumber && $right instanceof LoxNumber) {
+                    return new LoxNumber($left->getValue() + $right->getValue());
                 }
 
-                if (is_string($left) && is_string($right)) {
-                    return $left . $right;
+                if ($left instanceof LoxString && $right instanceof LoxString) {
+                    return new LoxString($left->getValue() . $right->getValue());
                 }
 
                 throw new RuntimeError(
@@ -174,17 +177,17 @@ class Interpreter implements InterpreterInterface, VisitorInterface
             case TokenType::SLASH:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                if ($right === 0.0) {
+                if ($right->getValue() === 0.0) {
                     throw new RuntimeError("Can't divide by zero.", $operator->getLine(), $operator->getColumn());
                 }
 
-                return $left / $right;
+                return new LoxNumber($left->getValue() / $right->getValue());
             case TokenType::STAR:
                 $this->checkNumberOperands($operator, $left, $right);
 
-                return $left * $right;
+                return new LoxNumber($left->getValue() * $right->getValue());
             default:
-                return null;
+                return new LoxNull();
         }
     }
 
@@ -245,14 +248,15 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitLiteralExpression(LiteralExpression $expression): mixed
+    public function visitLiteralExpression(LiteralExpression $expression): LoxLiteral
     {
         $value = $expression->getValue();
 
         return match ($expression->getType()) {
-            TokenType::STRING => (string)$value,
-            TokenType::NUMBER => (float)$value,
-            default => $value,
+            TokenType::TRUE, TokenType::FALSE => new LoxBoolean((bool)$value),
+            TokenType::STRING => new LoxString((string)$value),
+            TokenType::NUMBER => new LoxNumber((float)$value),
+            default => new LoxNull(),
         };
     }
 
@@ -263,16 +267,16 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     {
         $left = $expression->getLeft()->accept($this);
         if ($expression->getOperator()->getType() === TokenType::OR) {
-            if ($left) {
+            if ($this->isTruthy($left)) {
                 return $left;
             }
         } else {
-            if (!$left) {
+            if (!$this->isTruthy($left)) {
                 return $left;
             }
         }
 
-        return $expression->getRight()->accept($this);
+        return $this->isTruthy($expression->getRight()->accept($this));
     }
 
     /**
@@ -325,23 +329,22 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitUnaryExpression(UnaryExpression $expression): int|bool|null|float
+    public function visitUnaryExpression(UnaryExpression $expression): LoxLiteral
     {
         $right = $expression->getRight()->accept($this);
         $operator = $expression->getOperator();
 
         switch ($operator->getType()) {
             case TokenType::BANG:
-                return !$right;
+                return new LoxBoolean(!$this->isTruthy($right));
             case TokenType::MINUS:
                 $this->checkNumberOperand($operator, $right);
 
-                return -$right;
+                return new LoxNumber(-$right->getValue());
             default:
-                return null;
+                return new LoxNull();
         }
     }
-
 
     /**
      * @inheritDoc
@@ -420,8 +423,10 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitFunctionStatement(FunctionStatement $statement): mixed
     {
-        $function = new LoxFunction($statement, $this->environment, false);
-        $this->environment = $this->environment->define($statement->getName()->getLexeme(), $function);
+        $this->environment = $this->environment->define(
+            $statement->getName()->getLexeme(),
+            new LoxFunction($statement, $this->environment, false)
+        );
 
         return null;
     }
@@ -431,7 +436,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitIfStatement(IfStatement $statement): mixed
     {
-        if ($statement->getCondition()->accept($this)) {
+        if ($this->isTruthy($statement->getCondition()->accept($this))) {
             $statement->getThen()->accept($this);
         } elseif ($statement->getElse()) {
             $statement->getElse()->accept($this);
@@ -445,7 +450,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitPrintStatement(PrintStatement $statement): mixed
     {
-        fwrite($this->stream, $this->stringify($statement->getExpression()->accept($this)) . PHP_EOL);
+        fwrite($this->stream, $statement->getExpression()->accept($this) . PHP_EOL);
 
         return null;
     }
@@ -478,7 +483,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitWhileStatement(WhileStatement $statement): mixed
     {
-        while ($statement->getCondition()->accept($this)) {
+        while ($this->isTruthy($statement->getCondition()->accept($this))) {
             $statement->getBody()->accept($this);
         }
 
@@ -496,7 +501,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     private function checkNumberOperand(TokenInterface $operator, mixed $operand): void
     {
-        if (!is_float($operand)) {
+        if (!$operand instanceof LoxNumber) {
             throw new RuntimeError('Operand must be a number.', $operator->getLine(), $operator->getColumn());
         }
     }
@@ -513,25 +518,20 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     private function checkNumberOperands(TokenInterface $operator, mixed $left, mixed $right): void
     {
-        if (!is_float($left) || !is_float($right)) {
+        if (!$left instanceof LoxNumber || !$right instanceof LoxNumber) {
             throw new RuntimeError('Operands must be numbers.', $operator->getLine(), $operator->getColumn());
         }
     }
 
     /**
-     * Stringify value.
+     * Check if value is truthy.
      *
      * @param mixed $value
      *
-     * @return string
+     * @return bool
      */
-    private function stringify(mixed $value): string
+    private function isTruthy(mixed $value): bool
     {
-        return match ($value) {
-            null => 'nil',
-            true => 'true',
-            false => 'false',
-            default => (string)$value,
-        };
+        return (bool)($value instanceof LoxLiteral ? $value->getValue() : $value);
     }
 }

@@ -12,12 +12,4 @@ class LoxBoolean extends LoxLiteral
     {
         return $this->value ? 'true' : 'false';
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getFunctions(): array
-    {
-        return [];
-    }
 }

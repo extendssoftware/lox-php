@@ -67,5 +67,10 @@ abstract class LoxLiteral extends LoxInstance
      *
      * @return array<string, Closure>
      */
-    abstract protected function getFunctions(): array;
+    protected function getFunctions(): array
+    {
+        return [
+            'toString' => fn() => (string)$this,
+        ];
+    }
 }

@@ -20,12 +20,4 @@ class LoxNull extends LoxLiteral
     {
         return 'nil';
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getFunctions(): array
-    {
-        return [];
-    }
 }

@@ -27,7 +27,7 @@ term                ::= factor (("-" | "+") factor)*
 factor              ::= unary (("/" | "*") unary)*
 unary               ::= ("!" | "-") unary | call
 call                ::= primary ("(" arguments? ")" | "." IDENTIFIER)*
-primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "super" "." IDENTIFIER
+primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "[" arguments? "]" | "super" "." IDENTIFIER
 
 // Utility rules
 function            ::= IDENTIFIER "(" parameters? ")" block

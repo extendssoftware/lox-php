@@ -8,6 +8,7 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\Token;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use function array_slice;
+use function array_splice;
 use function count;
 use function ctype_alnum;
 use function ctype_alpha;
@@ -82,6 +83,19 @@ class Scanner implements ScannerInterface
         'true' => TokenType::TRUE,
         'var' => TokenType::VAR,
         'while' => TokenType::WHILE,
+    ];
+
+    /**
+     * Escape sequences.
+     *
+     * @var array<string, string>
+     */
+    private array $sequences = [
+        '"' => '"',
+        '\\' => '\\',
+        'n' => "\n",
+        'r' => "\r",
+        't' => "\t",
     ];
 
     /**
@@ -187,6 +201,14 @@ class Scanner implements ScannerInterface
                 break;
             case '"':
                 while ($this->current() !== '"' && $this->hasMore()) {
+                    if ($this->current() === '\\') {
+                        $peek = $this->peek();
+                        if (isset($this->sequences[$peek])) {
+                            // Replace backslash and nex character with escape sequence.
+                            array_splice($this->characters, $this->position, 2, [$this->sequences[$peek]]);
+                        }
+                    }
+
                     $this->consume();
                 }
 

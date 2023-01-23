@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter;
 
-use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
 use Stringable;
 

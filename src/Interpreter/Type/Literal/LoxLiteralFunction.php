@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
 use ReflectionFunction;
 
 class LoxLiteralFunction implements LoxCallableInterface

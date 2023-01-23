@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Class;
 
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\LoxFunction;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 
 class LoxClass implements LoxCallableInterface
 {

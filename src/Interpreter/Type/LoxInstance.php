@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Class\LoxClass;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use Stringable;
 use function array_key_exists;

@@ -1,6 +1,6 @@
 <?php
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use function array_merge;
 use function strlen;

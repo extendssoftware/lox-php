@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter\Callable;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Function;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
-use ExtendsSoftware\LoxPHP\Interpreter\ReturnValue;
+use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
 use function count;
 use function sprintf;

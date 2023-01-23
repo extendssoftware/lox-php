@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ExtendsSoftware\LoxPHP\Interpreter;
+namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Function;
 
 use Exception;
 use ExtendsSoftware\LoxPHP\LoxExceptionInterface;

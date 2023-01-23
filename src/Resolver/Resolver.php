@@ -5,6 +5,7 @@ namespace ExtendsSoftware\LoxPHP\Resolver;
 
 use ArrayObject;
 use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
@@ -87,6 +88,18 @@ class Resolver implements ResolverInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitArrayExpression(ArrayExpression $expression): mixed
+    {
+        foreach ($expression->getArguments() as $argument) {
+            $this->resolve($argument);
+        }
+
+        return null;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Parser;
 
 use ExtendsSoftware\LoxPHP\Parser\Error\ParseError;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
@@ -708,9 +709,22 @@ class Parser implements ParserInterface
 
         if ($this->match(TokenType::LEFT_PAREN)) {
             $expression = $this->expression();
-            $this->consume(TokenType::RIGHT_PAREN, "Expected ')' after expression.");
+            $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after expression.");
 
             return new GroupingExpression($expression);
+        }
+
+        if ($this->match(TokenType::LEFT_BRACKET)) {
+            $arguments = [];
+            if (!$this->match(TokenType::RIGHT_BRACKET)) {
+                do {
+                    $arguments[] = $this->expression();
+                } while ($this->match(TokenType::COMMA));
+
+                $this->consume(TokenType::RIGHT_BRACKET, "Expect ']' after array items.");
+            }
+
+            return new ArrayExpression($arguments);
         }
 
         $token = $this->current();

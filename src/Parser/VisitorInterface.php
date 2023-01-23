@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Parser;
 
 use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
@@ -28,6 +29,16 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
 
 interface VisitorInterface
 {
+    /**
+     * Visit array expression.
+     *
+     * @param ArrayExpression $expression
+     *
+     * @return mixed
+     * @throws LoxExceptionInterface
+     */
+    public function visitArrayExpression(ArrayExpression $expression): mixed;
+
     /**
      * Visit assign expression.
      *

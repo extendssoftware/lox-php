@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
+use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxArray;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxBoolean;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxCallableInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Callable\LoxClass;
@@ -16,6 +17,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Global\GlobalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
@@ -112,6 +114,19 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitArrayExpression(ArrayExpression $expression): LoxArray
+    {
+        $arguments = [];
+        foreach ($expression->getArguments() as $argument) {
+            $arguments[] = $argument->accept($this);
+        }
+
+        return new LoxArray($arguments);
     }
 
     /**

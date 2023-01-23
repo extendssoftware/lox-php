@@ -123,6 +123,12 @@ class Scanner implements ScannerInterface
             case '}':
                 $this->addToken(TokenType::RIGHT_BRACE);
                 break;
+            case '[':
+                $this->addToken(TokenType::LEFT_BRACKET);
+                break;
+            case ']':
+                $this->addToken(TokenType::RIGHT_BRACKET);
+                break;
             case ',':
                 $this->addToken(TokenType::COMMA);
                 break;

@@ -28,6 +28,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Variable\VariableExpression;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Block\BlockStatement;
@@ -42,11 +43,15 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
+use ReflectionClass;
+use ReflectionException;
 use TypeError;
 use function fopen;
 use function fwrite;
+use function get_class;
 use function is_resource;
 use function sprintf;
+use function str_replace;
 
 class Interpreter implements InterpreterInterface, VisitorInterface
 {
@@ -339,6 +344,19 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     public function visitThisExpression(ThisExpression $expression): mixed
     {
         return $this->environment->get($expression->getKeyword()->getLexeme());
+    }
+
+    /**
+     * @inheritDoc
+     * @throws ReflectionException
+     */
+    public function visitTypeofExpression(TypeofExpression $expression): LoxString
+    {
+        $operand = $expression->getOperand()->accept($this);
+        $reflection = new ReflectionClass($operand);
+
+        // Remove leading 'Lox' from classname.
+        return new LoxString(str_replace('Lox', '', $reflection->getShortName()));
     }
 
     /**

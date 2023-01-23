@@ -52,6 +52,7 @@ enum TokenType
     case SUPER;
     case THIS;
     case TRUE;
+    case TYPEOF;
     case VAR;
     case WHILE;
 

@@ -17,6 +17,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Variable\VariableExpression;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Block\BlockStatement;
@@ -216,6 +217,16 @@ class Resolver implements ResolverInterface
         if ($this->currentClass === ClassType::NONE) {
             throw new CompileError("Can't use 'this' outside of a class.", $keyword->getLine(), $keyword->getColumn());
         }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitTypeofExpression(TypeofExpression $expression): mixed
+    {
+        $this->resolve($expression->getOperand());
 
         return null;
     }

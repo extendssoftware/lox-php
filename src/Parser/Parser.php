@@ -16,6 +16,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Variable\VariableExpression;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Block\BlockStatement;
@@ -582,12 +583,27 @@ class Parser implements ParserInterface
      */
     private function factor(): ExpressionInterface
     {
-        $expression = $this->unary();
+        $expression = $this->typeof();
         while ($this->match(TokenType::SLASH, TokenType::STAR)) {
-            $expression = new BinaryExpression($expression, $this->previous(), $this->unary());
+            $expression = new BinaryExpression($expression, $this->previous(), $this->typeof());
         }
 
         return $expression;
+    }
+
+    /**
+     * Typeof grammar rule.
+     *
+     * @return ExpressionInterface
+     * @throws ParseError
+     */
+    private function typeof(): ExpressionInterface
+    {
+        if ($this->match(TokenType::TYPEOF)) {
+            return new TypeofExpression($this->unary());
+        }
+
+        return $this->unary();
     }
 
     /**

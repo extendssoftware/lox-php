@@ -81,6 +81,7 @@ class Scanner implements ScannerInterface
         'super' => TokenType::SUPER,
         'this' => TokenType::THIS,
         'true' => TokenType::TRUE,
+        'typeof' => TokenType::TYPEOF,
         'var' => TokenType::VAR,
         'while' => TokenType::WHILE,
     ];

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
-class LoxNull extends LoxLiteral
+class LoxNil extends LoxLiteral
 {
     /**
      * LoxNull constructor.

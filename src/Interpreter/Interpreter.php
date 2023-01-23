@@ -13,7 +13,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\ReturnValue;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxArray;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxBoolean;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxLiteral;
-use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNull;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
@@ -207,7 +207,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
 
                 return new LoxNumber($left->getValue() * $right->getValue());
             default:
-                return new LoxNull();
+                return new LoxNil();
         }
     }
 
@@ -276,7 +276,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
             TokenType::TRUE, TokenType::FALSE => new LoxBoolean((bool)$value),
             TokenType::STRING => new LoxString((string)$value),
             TokenType::NUMBER => new LoxNumber((float)$value),
-            default => new LoxNull(),
+            default => new LoxNil(),
         };
     }
 
@@ -375,7 +375,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
 
                 return new LoxNumber(-$right->getValue());
             default:
-                return new LoxNull();
+                return new LoxNil();
         }
     }
 

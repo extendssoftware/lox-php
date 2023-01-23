@@ -705,13 +705,13 @@ class Parser implements ParserInterface
 
         if ($this->match(TokenType::LEFT_BRACKET)) {
             $arguments = [];
-            if (!$this->match(TokenType::RIGHT_BRACKET)) {
+            if (!$this->check(TokenType::RIGHT_BRACKET)) {
                 do {
                     $arguments[] = $this->expression();
                 } while ($this->match(TokenType::COMMA));
-
-                $this->consume(TokenType::RIGHT_BRACKET, "Expect ']' after array items.");
             }
+
+            $this->consume(TokenType::RIGHT_BRACKET, "Expect ']' after array items.");
 
             return new ArrayExpression($arguments);
         }

@@ -617,7 +617,28 @@ class Parser implements ParserInterface
 
         while (true) {
             if ($this->match(TokenType::LEFT_PAREN)) {
-                $expression = $this->finishCall($expression);
+                $arguments = [];
+                if (!$this->check(TokenType::RIGHT_PAREN)) {
+                    do {
+                        if (count($arguments) >= 255) {
+                            $token = $this->current();
+
+                            throw new ParseError(
+                                "Can't have more than 255 arguments.",
+                                $token->getLine(),
+                                $token->getColumn()
+                            );
+                        }
+
+                        $arguments[] = $this->expression();
+                    } while ($this->match(TokenType::COMMA));
+                }
+
+                $expression = new CallExpression(
+                    $expression,
+                    $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after arguments."),
+                    $arguments
+                );
             } elseif ($this->match(TokenType::DOT)) {
                 $expression = new GetExpression(
                     $expression,
@@ -629,38 +650,6 @@ class Parser implements ParserInterface
         }
 
         return $expression;
-    }
-
-    /**
-     * Finish call expression.
-     *
-     * @param ExpressionInterface $callee
-     *
-     * @return ExpressionInterface
-     * @throws ParseError
-     */
-    private function finishCall(ExpressionInterface $callee): ExpressionInterface
-    {
-        $arguments = [];
-        if (!$this->check(TokenType::RIGHT_PAREN)) {
-            do {
-                if (count($arguments) >= 255) {
-                    $token = $this->current();
-
-                    throw new ParseError(
-                        "Can't have more than 255 arguments.",
-                        $token->getLine(),
-                        $token->getColumn()
-                    );
-                }
-
-                $arguments[] = $this->expression();
-            } while ($this->match(TokenType::COMMA));
-        }
-
-        $paren = $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after arguments.");
-
-        return new CallExpression($callee, $paren, $arguments);
     }
 
     /**

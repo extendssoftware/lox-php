@@ -3,6 +3,7 @@
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use function array_merge;
+use function str_replace;
 use function strlen;
 
 class LoxString extends LoxLiteral
@@ -28,6 +29,9 @@ class LoxString extends LoxLiteral
 
                     return new LoxNil();
                 },
+                'replace' => fn($search, $replace) => new LoxString(
+                    str_replace((string)$search, (string)$replace, $this->value)
+                ),
             ]
         );
     }

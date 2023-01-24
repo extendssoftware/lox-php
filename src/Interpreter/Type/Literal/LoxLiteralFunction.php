@@ -51,6 +51,6 @@ class LoxLiteralFunction implements LoxCallableInterface
      */
     public function __toString()
     {
-        return sprintf('<function %s>', $this->function->getName());
+        return '<native function>';
     }
 }

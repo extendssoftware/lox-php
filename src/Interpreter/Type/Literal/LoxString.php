@@ -3,12 +3,15 @@
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use InvalidArgumentException;
+use function abs;
+use function array_map;
 use function array_merge;
 use function explode;
-use function preg_match;
+use function preg_match_all;
 use function str_replace;
 use function strlen;
 use function strrev;
+use function trim;
 
 class LoxString extends LoxLiteral
 {
@@ -46,11 +49,11 @@ class LoxString extends LoxLiteral
                 'trim' => fn(): LoxString => new LoxString(trim($this->value)),
                 'reverse' => fn(): LoxString => new LoxString(strrev($this->value)),
                 'match' => function (string $pattern): LoxArray {
-                    if (@preg_match($pattern, $this->value, $matches) === false) {
+                    if (@preg_match_all($pattern, $this->value, $matches) === false) {
                         throw new InvalidArgumentException('Invalid regular expression.');
                     }
 
-                    return new LoxArray($matches);
+                    return new LoxArray(array_map(fn($match) => new LoxString($match), $matches[0]));
                 },
             ]
         );

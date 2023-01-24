@@ -30,7 +30,7 @@ abstract class LoxLiteral extends LoxInstance
         $lexeme = $name->getLexeme();
         $functions = $this->getFunctions();
         if (isset($functions[$lexeme])) {
-            return new LoxLiteralFunction(new ReflectionFunction($functions[$lexeme]));
+            return new LoxLiteralFunction($name, new ReflectionFunction($functions[$lexeme]));
         }
 
         return parent::get($name);

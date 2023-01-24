@@ -3,18 +3,22 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
+use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
+use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ReflectionFunction;
+use Throwable;
 
 class LoxLiteralFunction implements LoxCallableInterface
 {
     /**
      * LoxLiteral constructor.
      *
+     * @param TokenInterface     $name
      * @param ReflectionFunction $function
      */
-    public function __construct(readonly private ReflectionFunction $function)
+    public function __construct(readonly private TokenInterface $name, readonly private ReflectionFunction $function)
     {
     }
 
@@ -23,7 +27,11 @@ class LoxLiteralFunction implements LoxCallableInterface
      */
     public function call(InterpreterInterface $interpreter, array $arguments): mixed
     {
-        return $this->function->invoke(...$arguments);
+        try {
+            return $this->function->invoke(...$arguments);
+        } catch (Throwable $exception) {
+            throw new RuntimeError($exception->getMessage(), $this->name->getLine(), $this->name->getColumn());
+        }
     }
 
     /**

@@ -52,7 +52,7 @@ class LoxString extends LoxLiteral
                 'matches' => function (string $pattern): LoxArray {
                     @preg_match_all($pattern, $this->value, $matches);
 
-                    return new LoxArray(array_map(fn($match) => new LoxString($match), $matches[0]));
+                    return new LoxArray(array_map(fn($match) => new LoxString($match), $matches[0] ?? []));
                 },
             ]
         );

@@ -7,6 +7,7 @@ use function abs;
 use function array_map;
 use function array_merge;
 use function explode;
+use function preg_match;
 use function preg_match_all;
 use function str_replace;
 use function strlen;
@@ -48,6 +49,7 @@ class LoxString extends LoxLiteral
                 },
                 'trim' => fn(): LoxString => new LoxString(trim($this->value)),
                 'reverse' => fn(): LoxString => new LoxString(strrev($this->value)),
+                'test' => fn(string $pattern): LoxBoolean => new LoxBoolean(@preg_match($pattern, $this->value) === 1),
                 'match' => function (string $pattern): LoxArray {
                     if (@preg_match_all($pattern, $this->value, $matches) === false) {
                         throw new InvalidArgumentException('Invalid regular expression.');

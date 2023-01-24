@@ -13,6 +13,14 @@ use ExtendsSoftware\LoxPHP\Scanner\ScannerInterface;
 
 class Lox implements LoxInterface
 {
+    /**
+     * Lox constructor.
+     *
+     * @param ScannerInterface     $scanner
+     * @param ParserInterface      $parser
+     * @param ResolverInterface    $resolver
+     * @param InterpreterInterface $interpreter
+     */
     public function __construct(
         readonly private ScannerInterface     $scanner = new Scanner(),
         readonly private ParserInterface      $parser = new Parser(),

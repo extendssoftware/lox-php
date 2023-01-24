@@ -18,8 +18,8 @@ class LoxString extends LoxLiteral
             parent::getFunctions(),
             [
                 'length' => fn() => new LoxNumber(strlen($this->value)),
-                'get' => function ($index = 0) {
-                    $index = (int)(string)$index;
+                'get' => function (string $index = '0') {
+                    $index = (int)$index;
                     if ($index < 0) {
                         $index = strlen($this->value) - abs($index);
                     }
@@ -30,8 +30,8 @@ class LoxString extends LoxLiteral
 
                     return new LoxNil();
                 },
-                'replace' => fn($search, $replace) => new LoxString(
-                    str_replace((string)$search, (string)$replace, $this->value)
+                'replace' => fn(string $search, string $replace) => new LoxString(
+                    str_replace($search, $replace, $this->value)
                 ),
                 'explode' => function (string $separator = ' ') {
                     if (strlen($separator) === 0) {

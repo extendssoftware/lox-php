@@ -33,8 +33,8 @@ class LoxArray extends LoxLiteral
             parent::getFunctions(),
             [
                 'count' => fn() => new LoxNumber(count($this->value)),
-                'get' => function ($index = 0) {
-                    $index = (int)(string)$index;
+                'get' => function (string $index = '0') {
+                    $index = (int)$index;
                     if ($index < 0) {
                         $index = count($this->value) - abs($index);
                     }
@@ -58,11 +58,11 @@ class LoxArray extends LoxLiteral
                     return array_unshift($this->value, $value);
                 },
                 'reverse' => fn() => new LoxArray(array_reverse($this->value)),
-                'slice' => function ($start, $length = null) {
-                    $start = (int)(string)$start;
+                'slice' => function (string $start, string $length = null) {
+                    $start = (int)$start;
 
                     if ($length !== null) {
-                        $length = (int)(string)$length;
+                        $length = (int)$length;
                     }
 
                     return new LoxArray(array_slice($this->value, $start, $length));

@@ -16,7 +16,7 @@ abstract class LoxLiteral extends LoxInstance
      *
      * @param mixed $value
      */
-    public function __construct(readonly protected mixed $value)
+    public function __construct(protected mixed $value)
     {
         parent::__construct();
     }
@@ -30,7 +30,7 @@ abstract class LoxLiteral extends LoxInstance
         $lexeme = $name->getLexeme();
         $functions = $this->getFunctions();
         if (isset($functions[$lexeme])) {
-            return new LoxLiteralFunction($this, new ReflectionFunction($functions[$lexeme]));
+            return new LoxLiteralFunction(new ReflectionFunction($functions[$lexeme]));
         }
 
         return parent::get($name);

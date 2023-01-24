@@ -12,10 +12,9 @@ class LoxLiteralFunction implements LoxCallableInterface
     /**
      * LoxLiteral constructor.
      *
-     * @param LoxLiteral         $literal
      * @param ReflectionFunction $function
      */
-    public function __construct(readonly private LoxLiteral $literal, readonly private ReflectionFunction $function)
+    public function __construct(readonly private ReflectionFunction $function)
     {
     }
 
@@ -24,7 +23,7 @@ class LoxLiteralFunction implements LoxCallableInterface
      */
     public function call(InterpreterInterface $interpreter, array $arguments): mixed
     {
-        return $this->function->invoke($this->literal, ...$arguments);
+        return $this->function->invoke(...$arguments);
     }
 
     /**

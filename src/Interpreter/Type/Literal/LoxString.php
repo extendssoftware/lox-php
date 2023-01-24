@@ -2,7 +2,6 @@
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
-use InvalidArgumentException;
 use function abs;
 use function array_map;
 use function array_merge;
@@ -51,9 +50,7 @@ class LoxString extends LoxLiteral
                 'reverse' => fn(): LoxString => new LoxString(strrev($this->value)),
                 'match' => fn(string $pattern): LoxBoolean => new LoxBoolean(@preg_match($pattern, $this->value) === 1),
                 'matches' => function (string $pattern): LoxArray {
-                    if (@preg_match_all($pattern, $this->value, $matches) === false) {
-                        throw new InvalidArgumentException('Invalid regular expression.');
-                    }
+                    @preg_match_all($pattern, $this->value, $matches);
 
                     return new LoxArray(array_map(fn($match) => new LoxString($match), $matches[0]));
                 },

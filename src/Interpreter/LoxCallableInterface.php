@@ -20,9 +20,9 @@ interface LoxCallableInterface extends Stringable
     public function call(InterpreterInterface $interpreter, array $arguments): mixed;
 
     /**
-     * Callable argument count.
+     * Possible arities.
      *
-     * @return int
+     * @return array<int>
      */
-    public function arity(): int;
+    public function arities(): array;
 }

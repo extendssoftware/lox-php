@@ -29,9 +29,21 @@ class LoxLiteralFunction implements LoxCallableInterface
     /**
      * @inheritDoc
      */
-    public function arity(): int
+    public function arities(): array
     {
-        return $this->function->getNumberOfParameters();
+        $count = 0;
+        $arities = [];
+        foreach ($this->function->getParameters() as $parameter) {
+            if ($parameter->isOptional()) {
+                $arities[] = $count;
+            }
+
+            $count++;
+        }
+
+        $arities[] = $count;
+
+        return $arities;
     }
 
     /**

@@ -49,6 +49,8 @@ use TypeError;
 use function fopen;
 use function fwrite;
 use function get_class;
+use function implode;
+use function in_array;
 use function is_resource;
 use function sprintf;
 use function str_replace;
@@ -230,11 +232,17 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         $count = count($arguments);
-        if ($count !== $callee->arity()) {
+        $arities = $callee->arities();
+        if (!in_array($count, $arities)) {
             $token = $expression->getParen();
 
+            $expected = array_pop($arities);
+            if (count($arities)) {
+                $expected = implode(', ', $arities) . ' or ' . $expected;
+            }
+
             throw new RuntimeError(
-                sprintf('Expected %d arguments but got %d.', $callee->arity(), $count),
+                sprintf('Expected %s arguments but got %d.', $expected, $count),
                 $token->getLine(),
                 $token->getColumn()
             );

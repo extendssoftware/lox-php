@@ -59,9 +59,9 @@ class LoxFunction implements LoxCallableInterface
     /**
      * @inheritDoc
      */
-    public function arity(): int
+    public function arities(): array
     {
-        return count($this->declaration->getParameters());
+        return [count($this->declaration->getParameters())];
     }
 
     /**

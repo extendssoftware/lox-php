@@ -38,9 +38,9 @@ class LoxClass implements LoxCallableInterface
     /**
      * @inheritDoc
      */
-    public function arity(): int
+    public function arities(): array
     {
-        return $this->findMethod('init')?->arity() ?: 0;
+        return $this->findMethod('init')?->arities() ?: [0];
     }
 
     /**

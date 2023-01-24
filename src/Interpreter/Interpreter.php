@@ -46,14 +46,16 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use ReflectionClass;
 use ReflectionException;
 use TypeError;
+use function array_pop;
+use function boolval;
 use function fopen;
 use function fwrite;
-use function get_class;
 use function implode;
 use function in_array;
 use function is_resource;
 use function sprintf;
 use function str_replace;
+use function strval;
 
 class Interpreter implements InterpreterInterface, VisitorInterface
 {
@@ -573,6 +575,6 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     private function isTruthy(mixed $value): bool
     {
-        return (bool)($value instanceof LoxLiteral ? $value->getValue() : $value);
+        return boolval(strval($value));
     }
 }

@@ -40,6 +40,7 @@ class LoxString extends LoxLiteral
 
                     return new LoxArray(explode($separator, $this->value));
                 },
+                'trim' => fn() => new LoxString(trim($this->value)),
             ]
         );
     }

@@ -575,6 +575,10 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     private function isTruthy(mixed $value): bool
     {
-        return boolval(strval($value));
+        if ($value instanceof LoxLiteral) {
+            return (bool)$value->getValue();
+        }
+
+        return true;
     }
 }

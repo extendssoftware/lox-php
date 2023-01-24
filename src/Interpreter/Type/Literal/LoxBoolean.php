@@ -10,6 +10,6 @@ class LoxBoolean extends LoxLiteral
      */
     public function __toString(): string
     {
-        return $this->value ? 'true' : 'false';
+        return $this->value ? '1' : '0';
     }
 }

@@ -3,6 +3,7 @@
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use function array_merge;
+use function explode;
 use function str_replace;
 use function strlen;
 
@@ -32,6 +33,13 @@ class LoxString extends LoxLiteral
                 'replace' => fn($search, $replace) => new LoxString(
                     str_replace((string)$search, (string)$replace, $this->value)
                 ),
+                'explode' => function (string $separator = ' ') {
+                    if (strlen($separator) === 0) {
+                        $separator = ' ';
+                    }
+
+                    return new LoxArray(explode($separator, $this->value));
+                },
             ]
         );
     }

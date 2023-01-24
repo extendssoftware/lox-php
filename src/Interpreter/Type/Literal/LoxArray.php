@@ -12,6 +12,7 @@ use function array_shift;
 use function array_slice;
 use function array_unshift;
 use function implode;
+use function strlen;
 
 class LoxArray extends LoxLiteral
 {
@@ -65,6 +66,9 @@ class LoxArray extends LoxLiteral
                     }
 
                     return new LoxArray(array_slice($this->value, $start, $length));
+                },
+                'implode' => function (string $separator = '') {
+                    return new LoxString(implode($separator, $this->value));
                 },
             ]
         );

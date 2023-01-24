@@ -6,6 +6,7 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 use function array_merge;
 use function array_pop;
 use function array_push;
+use function array_reverse;
 use function array_shift;
 use function array_unshift;
 use function implode;
@@ -53,6 +54,7 @@ class LoxArray extends LoxLiteral
 
                     return array_unshift($this->value, $value);
                 },
+                'reverse' => fn() => new LoxArray(array_reverse($this->value)),
             ]
         );
     }

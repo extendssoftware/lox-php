@@ -32,7 +32,7 @@ class LoxArray extends LoxLiteral
             parent::getFunctions(),
             [
                 'count' => fn() => new LoxNumber(count($this->value)),
-                'at' => function ($index = 0) {
+                'get' => function ($index = 0) {
                     $index = (int)(string)$index;
                     if ($index < 0) {
                         $index = count($this->value) - abs($index);

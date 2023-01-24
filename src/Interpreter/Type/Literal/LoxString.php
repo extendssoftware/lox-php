@@ -17,7 +17,7 @@ class LoxString extends LoxLiteral
             parent::getFunctions(),
             [
                 'length' => fn() => new LoxNumber(strlen($this->value)),
-                'at' => function ($index = 0) {
+                'get' => function ($index = 0) {
                     $index = (int)(string)$index;
                     if ($index < 0) {
                         $index = strlen($this->value) - abs($index);

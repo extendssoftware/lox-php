@@ -12,7 +12,6 @@ use function array_shift;
 use function array_slice;
 use function array_unshift;
 use function implode;
-use function strlen;
 
 class LoxArray extends LoxLiteral
 {
@@ -42,21 +41,9 @@ class LoxArray extends LoxLiteral
                     return $this->value[$index] ?? new LoxNil();
                 },
                 'pop' => fn() => array_pop($this->value),
-                'push' => function ($value): LoxNil|LoxNumber {
-                    if ($value === $this) {
-                        return new LoxNil();
-                    }
-
-                    return new LoxNumber(array_push($this->value, $value));
-                },
+                'push' => fn($value): LoxNumber => new LoxNumber(array_push($this->value, $value)),
                 'shift' => fn() => array_shift($this->value),
-                'unshift' => function ($value): LoxNil|LoxNumber {
-                    if ($value === $this) {
-                        return new LoxNil();
-                    }
-
-                    return new LoxNumber(array_unshift($this->value, $value));
-                },
+                'unshift' => fn($value): LoxNumber => new LoxNumber(array_unshift($this->value, $value)),
                 'reverse' => fn(): LoxArray => new LoxArray(array_reverse($this->value)),
                 'slice' => function (string $start, string $length = null): LoxArray {
                     $start = (int)$start;

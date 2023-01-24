@@ -32,7 +32,7 @@ class LoxArray extends LoxLiteral
         return array_merge(
             parent::getFunctions(),
             [
-                'count' => fn() => new LoxNumber(count($this->value)),
+                'count' => fn(): LoxNumber => new LoxNumber(count($this->value)),
                 'get' => function (string $index = '0') {
                     $index = (int)$index;
                     if ($index < 0) {
@@ -42,7 +42,7 @@ class LoxArray extends LoxLiteral
                     return $this->value[$index] ?? new LoxNil();
                 },
                 'pop' => fn() => array_pop($this->value),
-                'push' => function ($value) {
+                'push' => function ($value): LoxNil|LoxNumber {
                     if ($value === $this) {
                         return new LoxNil();
                     }
@@ -50,15 +50,15 @@ class LoxArray extends LoxLiteral
                     return new LoxNumber(array_push($this->value, $value));
                 },
                 'shift' => fn() => array_shift($this->value),
-                'unshift' => function ($value) {
+                'unshift' => function ($value): LoxNil|LoxNumber {
                     if ($value === $this) {
                         return new LoxNil();
                     }
 
-                    return array_unshift($this->value, $value);
+                    return new LoxNumber(array_unshift($this->value, $value));
                 },
-                'reverse' => fn() => new LoxArray(array_reverse($this->value)),
-                'slice' => function (string $start, string $length = null) {
+                'reverse' => fn(): LoxArray => new LoxArray(array_reverse($this->value)),
+                'slice' => function (string $start, string $length = null): LoxArray {
                     $start = (int)$start;
 
                     if ($length !== null) {
@@ -67,9 +67,7 @@ class LoxArray extends LoxLiteral
 
                     return new LoxArray(array_slice($this->value, $start, $length));
                 },
-                'implode' => function (string $separator = '') {
-                    return new LoxString(implode($separator, $this->value));
-                },
+                'implode' => fn(string $separator = ''): LoxString => new LoxString(implode($separator, $this->value)),
             ]
         );
     }

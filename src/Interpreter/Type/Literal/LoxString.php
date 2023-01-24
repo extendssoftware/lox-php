@@ -6,6 +6,7 @@ use function array_merge;
 use function explode;
 use function str_replace;
 use function strlen;
+use function strrev;
 
 class LoxString extends LoxLiteral
 {
@@ -41,6 +42,7 @@ class LoxString extends LoxLiteral
                     return new LoxArray(explode($separator, $this->value));
                 },
                 'trim' => fn() => new LoxString(trim($this->value)),
+                'reverse' => fn() => new LoxString(strrev($this->value)),
             ]
         );
     }

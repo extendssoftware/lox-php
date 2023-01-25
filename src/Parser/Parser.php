@@ -9,6 +9,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Get\GetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Grouping\GroupingExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
@@ -75,7 +76,9 @@ class Parser implements ParserInterface
         if ($this->match(TokenType::NEW_CLASS)) {
             return $this->classDeclaration();
         }
-        if ($this->match(TokenType::FUN)) {
+        if ($this->check(TokenType::FUN) && $this->checkNext(TokenType::IDENTIFIER)) {
+            $this->advance();
+
             return $this->functionDeclaration('function');
         }
         if ($this->match(TokenType::VAR)) {
@@ -105,7 +108,7 @@ class Parser implements ParserInterface
 
         $methods = [];
         while (!$this->check(TokenType::RIGHT_BRACE) && !$this->isAtEnd()) {
-            $methods[] = $this->functionDeclaration('function');
+            $methods[] = $this->functionDeclaration('method');
         }
 
         $this->consume(TokenType::RIGHT_BRACE, "Expect '}' after body class.'");
@@ -124,6 +127,20 @@ class Parser implements ParserInterface
     private function functionDeclaration(string $type): FunctionStatement
     {
         $name = $this->consume(TokenType::IDENTIFIER, sprintf('Expect %s name.', $type));
+
+        return new FunctionStatement($name, $this->functionBody($type));
+    }
+
+    /**
+     * Function body.
+     *
+     * @param string $type
+     *
+     * @return FunctionExpression
+     * @throws ParseError
+     */
+    private function functionBody(string $type): FunctionExpression
+    {
         $this->consume(TokenType::LEFT_PAREN, sprintf("Expect '(' after %s name'", $type));
 
         $parameters = [];
@@ -142,12 +159,12 @@ class Parser implements ParserInterface
             } while ($this->match(TokenType::COMMA));
         }
 
-        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after parameters.");
+        $this->consume(TokenType::RIGHT_PAREN, sprintf("Expect ')' after %s parameters.", $type));
         $this->consume(TokenType::LEFT_BRACE, sprintf("Expect '{' before %s body.", $type));
 
         $body = $this->blockStatement();
 
-        return new FunctionStatement($name, $parameters, $body);
+        return new FunctionExpression($parameters, $body);
     }
 
     /**
@@ -391,6 +408,27 @@ class Parser implements ParserInterface
     }
 
     /**
+     * Check if next position matches token type.
+     *
+     * @param TokenType $type
+     *
+     * @return bool
+     */
+    private function checkNext(TokenType $type): bool
+    {
+        $next = $this->next();
+        if ($this->isAtEnd() || !$next) {
+            return false;
+        }
+
+        if ($next->getType() === TokenType::EOF) {
+            return false;
+        }
+
+        return $this->tokens[$this->current + 1]->getType() === $type;
+    }
+
+    /**
      * Move to next token and return current.
      *
      * @return TokenInterface
@@ -451,6 +489,16 @@ class Parser implements ParserInterface
     private function previous(): TokenInterface
     {
         return $this->tokens[$this->current - 1];
+    }
+
+    /**
+     * Get next token.
+     *
+     * @return TokenInterface|null
+     */
+    private function next(): ?TokenInterface
+    {
+        return $this->tokens[$this->current + 1] ?? null;
     }
 
     /**
@@ -699,7 +747,7 @@ class Parser implements ParserInterface
         if ($this->match(TokenType::SUPER)) {
             $keyword = $this->previous();
             $this->consume(TokenType::DOT, "Expect '.' after 'super'.");
-            $method = $this->consume(TokenType::IDENTIFIER, "Expect superclass method name.");
+            $method = $this->consume(TokenType::IDENTIFIER, 'Expect superclass method name.');
 
             return new SuperExpression($keyword, $method);
         }
@@ -730,6 +778,10 @@ class Parser implements ParserInterface
             $this->consume(TokenType::RIGHT_BRACKET, "Expect ']' after array items.");
 
             return new ArrayExpression($arguments);
+        }
+
+        if ($this->match(TokenType::FUN)) {
+            return $this->functionBody('anonymous function');
         }
 
         $token = $this->current();

@@ -8,6 +8,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Get\GetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Grouping\GroupingExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
@@ -69,6 +70,16 @@ interface VisitorInterface
      * @throws LoxExceptionInterface
      */
     public function visitCallExpression(CallExpression $expression): mixed;
+
+    /**
+     * Visit function expression.
+     *
+     * @param FunctionExpression $expression
+     *
+     * @return mixed
+     * @throws LoxExceptionInterface
+     */
+    public function visitFunctionExpression(FunctionExpression $expression): mixed;
 
     /**
      * Visit get expression.

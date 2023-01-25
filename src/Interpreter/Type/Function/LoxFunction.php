@@ -8,7 +8,8 @@ use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
-use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
+use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use function count;
 use function sprintf;
 
@@ -17,14 +18,16 @@ class LoxFunction implements LoxCallableInterface
     /**
      * LoxFunction constructor.
      *
-     * @param FunctionStatement    $declaration
+     * @param FunctionExpression   $declaration
      * @param EnvironmentInterface $closure
      * @param bool                 $isInitializer
+     * @param TokenInterface|null  $name
      */
     public function __construct(
-        readonly private FunctionStatement    $declaration,
+        readonly private FunctionExpression   $declaration,
         readonly private EnvironmentInterface $closure,
-        readonly private bool                 $isInitializer
+        readonly private bool                 $isInitializer,
+        readonly private ?TokenInterface      $name = null
     ) {
     }
 
@@ -69,7 +72,11 @@ class LoxFunction implements LoxCallableInterface
      */
     public function __toString(): string
     {
-        return sprintf('<function %s>', $this->declaration->getName()->getLexeme());
+        if ($this->name) {
+            return sprintf('<function %s>', $this->name->getLexeme());
+        }
+
+        return '<fn>';
     }
 
     /**

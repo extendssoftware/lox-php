@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\Function;
 
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
@@ -12,15 +13,11 @@ class FunctionStatement implements StatementInterface
     /**
      * FunctionStatement constructor.
      *
-     * @param TokenInterface            $name
-     * @param array<TokenInterface>     $parameters
-     * @param array<StatementInterface> $body
+     * @param TokenInterface     $name
+     * @param FunctionExpression $function
      */
-    public function __construct(
-        readonly private TokenInterface $name,
-        readonly private array          $parameters,
-        readonly private array          $body
-    ) {
+    public function __construct(readonly private TokenInterface $name, readonly private FunctionExpression $function)
+    {
     }
 
     /**
@@ -42,22 +39,12 @@ class FunctionStatement implements StatementInterface
     }
 
     /**
-     * Get parameters.
+     * Get function expression.
      *
-     * @return array<TokenInterface>
+     * @return FunctionExpression
      */
-    public function getParameters(): array
+    public function getFunction(): FunctionExpression
     {
-        return $this->parameters;
-    }
-
-    /**
-     * Get body.
-     *
-     * @return array<StatementInterface>
-     */
-    public function getBody(): array
-    {
-        return $this->body;
+        return $this->function;
     }
 }

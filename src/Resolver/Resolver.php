@@ -10,6 +10,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Get\GetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Grouping\GroupingExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
@@ -136,6 +137,17 @@ class Resolver implements ResolverInterface
 
         return null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitFunctionExpression(FunctionExpression $expression): mixed
+    {
+        $this->resolveFunction($expression, FunctionType::METHOD);
+
+        return null;
+    }
+
 
     /**
      * @inheritDoc
@@ -306,7 +318,7 @@ class Resolver implements ResolverInterface
                 $type = FunctionType::INITIALIZER;
             }
 
-            $this->resolveFunction($method, $type);
+            $this->resolveFunction($method->getFunction(), $type);
         }
 
         $this->endScope();
@@ -338,7 +350,7 @@ class Resolver implements ResolverInterface
         $this->declare($statement->getName());
         $this->define($statement->getName());
 
-        $this->resolveFunction($statement, FunctionType::FUNCTION);
+        $this->resolveFunction($statement->getFunction(), FunctionType::FUNCTION);
 
         return null;
     }
@@ -487,24 +499,24 @@ class Resolver implements ResolverInterface
     /**
      * Resolve function.
      *
-     * @param FunctionStatement $statement
-     * @param FunctionType      $type
+     * @param FunctionExpression $expression
+     * @param FunctionType       $type
      *
      * @return void
      * @throws LoxExceptionInterface
      */
-    private function resolveFunction(FunctionStatement $statement, FunctionType $type): void
+    private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
     {
         $enclosingFunction = $this->currentFunction;
         $this->currentFunction = $type;
 
         $this->beginScope();
-        foreach ($statement->getParameters() as $parameter) {
+        foreach ($expression->getParameters() as $parameter) {
             $this->declare($parameter);
             $this->define($parameter);
         }
 
-        $this->resolveAll($statement->getBody());
+        $this->resolveAll($expression->getBody());
         $this->endScope();
 
         $this->currentFunction = $enclosingFunction;

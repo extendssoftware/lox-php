@@ -21,6 +21,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Call\CallExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Get\GetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Grouping\GroupingExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
@@ -47,7 +48,6 @@ use ReflectionClass;
 use ReflectionException;
 use TypeError;
 use function array_pop;
-use function boolval;
 use function fopen;
 use function fwrite;
 use function implode;
@@ -55,7 +55,6 @@ use function in_array;
 use function is_resource;
 use function sprintf;
 use function str_replace;
-use function strval;
 
 class Interpreter implements InterpreterInterface, VisitorInterface
 {
@@ -256,6 +255,14 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
+    public function visitFunctionExpression(FunctionExpression $expression): LoxFunction
+    {
+        return new LoxFunction($expression, $this->environment, false);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function visitGetExpression(GetExpression $expression): mixed
     {
         $name = $expression->getName();
@@ -434,7 +441,12 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $methods = [];
         foreach ($statement->getMethods() as $method) {
             $methodLexeme = $method->getName()->getLexeme();
-            $methods[(string)$methodLexeme] = new LoxFunction($method, $this->environment, $methodLexeme === 'init');
+            $methods[(string)$methodLexeme] = new LoxFunction(
+                $method->getFunction(),
+                $this->environment,
+                $methodLexeme === 'init',
+                $name
+            );
         }
 
         $class = new LoxClass($classLexeme, $superclass, $methods);
@@ -468,7 +480,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     {
         $this->environment = $this->environment->define(
             $statement->getName()->getLexeme(),
-            new LoxFunction($statement, $this->environment, false)
+            new LoxFunction($statement->getFunction(), $this->environment, false, $statement->getName())
         );
 
         return null;

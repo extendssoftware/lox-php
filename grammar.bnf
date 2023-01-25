@@ -31,7 +31,7 @@ typeof              ::= "typeof" unary | unary
 unary               ::= ("!" | "-") unary | call
 call                ::= primary ("(" arguments? ")" | "." IDENTIFIER)*
 primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
-                        | "[" arguments? "]" | "super" "." IDENTIFIER | "fun" function_literal
+                        | "[" arguments? "]" | "super" "." IDENTIFIER | "fun" function_literal ";"
 
 // Utility rules
 function            ::= IDENTIFIER function_literal

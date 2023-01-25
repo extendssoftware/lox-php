@@ -7,9 +7,11 @@ functionDeclaration ::= "fun" function
 variableDeclaration ::= "var" IDENTIFIER ("=" expression)? ";"
 
 // Statements
-statement           ::= expressionStatement | forStatement | ifStatement | printStatement | returnStatement | whileStatement | block
+statement           ::= expressionStatement | forStatement | ifStatement | printStatement | returnStatement
+                        | whileStatement | block
 expressionStatement ::= expression ";"
-forStatement        ::= "for" "(" (variableDeclaration | expressionStatement | ";") expression? ";" expression? ")" statement
+forStatement        ::= "for" "(" (variableDeclaration | expressionStatement
+                        | ";") expression? ";" expression? ")" statement
 ifStatement         ::= "if" "(" expression ")" statement ("else" statement)?
 printStatement      ::= "print" expression ";"
 returnStatement     ::= "return" expression? ";"
@@ -28,10 +30,12 @@ factor              ::= typeof (("/" | "*") typeof)*
 typeof              ::= "typeof" unary | unary
 unary               ::= ("!" | "-") unary | call
 call                ::= primary ("(" arguments? ")" | "." IDENTIFIER)*
-primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "[" arguments? "]" | "super" "." IDENTIFIER
+primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+                        | "[" arguments? "]" | "super" "." IDENTIFIER | "fun" function_literal
 
 // Utility rules
-function            ::= IDENTIFIER "(" parameters? ")" block
+function            ::= IDENTIFIER function_literal
+function_literal    ::= "(" parameters? ")" block
 parameters          ::= IDENTIFIER ("," IDENTIFIER)*
 arguments           ::= expression ("," expression)*
 
@@ -39,7 +43,8 @@ arguments           ::= expression ("," expression)*
 NUMBER              ::= DIGIT+ ("." DIGIT+)?
 STRING              ::= "\"" <any char except "\"">* "\""
 IDENTIFIER          ::= ALPHA (ALPHA | DIGIT)*
-ALPHA               ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" |
-                        "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" |
-                        "_"
+ALPHA               ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+                        | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+                        | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P"
+                        | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "_"
 DIGIT               ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"

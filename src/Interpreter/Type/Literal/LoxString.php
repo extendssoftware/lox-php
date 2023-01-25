@@ -48,13 +48,29 @@ class LoxString extends LoxLiteral
                 },
                 'trim' => fn(): LoxString => new LoxString(trim($this->value)),
                 'reverse' => fn(): LoxString => new LoxString(strrev($this->value)),
-                'match' => fn(string $pattern): LoxBoolean => new LoxBoolean(@preg_match($pattern, $this->value) === 1),
-                'matches' => function (string $pattern): LoxArray {
+                'match' => function (string $pattern): LoxArray {
+                    @preg_match($pattern, $this->value, $matches);
+
+                    return $this->matchesToArray($matches ?: []);
+                },
+                'matchAll' => function (string $pattern): LoxArray {
                     @preg_match_all($pattern, $this->value, $matches);
 
-                    return new LoxArray(array_map(fn($match) => new LoxString($match), $matches[0] ?? []));
+                    return $this->matchesToArray($matches[0] ?? []);
                 },
             ]
         );
+    }
+
+    /**
+     * Convert string matches to Lox array.
+     *
+     * @param array<int, string> $matches
+     *
+     * @return LoxArray
+     */
+    private function matchesToArray(array $matches): LoxArray
+    {
+        return new LoxArray(array_map(fn($match) => new LoxString($match), $matches));
     }
 }

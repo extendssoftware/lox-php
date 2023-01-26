@@ -29,4 +29,13 @@ interface InterpreterInterface
      * @throws LoxExceptionInterface
      */
     public function executeBlock(array $statements, EnvironmentInterface $environment): InterpreterInterface;
+
+    /**
+     * Check if value is truthy.
+     *
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    public function isTruthy(mixed $value): bool;
 }

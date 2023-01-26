@@ -46,6 +46,7 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 use TypeError;
 use function array_pop;
 use function fopen;
@@ -122,6 +123,18 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isTruthy(mixed $value): bool
+    {
+        if ($value instanceof LoxLiteral) {
+            return (bool)$value->getValue();
+        }
+
+        return true;
     }
 
     /**
@@ -220,10 +233,10 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      */
     public function visitCallExpression(CallExpression $expression): mixed
     {
+        $token = $expression->getParen();
+
         $callee = $expression->getCallee()->accept($this);
         if (!$callee instanceof LoxCallableInterface) {
-            $token = $expression->getParen();
-
             throw new RuntimeError('Can only call functions and classes.', $token->getLine(), $token->getColumn());
         }
 
@@ -235,8 +248,6 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $count = count($arguments);
         $arities = $callee->arities();
         if (!in_array($count, $arities)) {
-            $token = $expression->getParen();
-
             $expected = array_pop($arities);
             if (count($arities)) {
                 $expected = implode(', ', $arities) . ' or ' . $expected;
@@ -249,7 +260,11 @@ class Interpreter implements InterpreterInterface, VisitorInterface
             );
         }
 
-        return $callee->call($this, $arguments);
+        try {
+            return $callee->call($this, $arguments);
+        } catch (Throwable $throwable) {
+            throw new RuntimeError($throwable->getMessage(), $token->getLine(), $token->getColumn());
+        }
     }
 
     /**
@@ -576,21 +591,5 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         if (!$left instanceof LoxNumber || !$right instanceof LoxNumber) {
             throw new RuntimeError('Operands must be numbers.', $operator->getLine(), $operator->getColumn());
         }
-    }
-
-    /**
-     * Check if value is truthy.
-     *
-     * @param mixed $value
-     *
-     * @return bool
-     */
-    private function isTruthy(mixed $value): bool
-    {
-        if ($value instanceof LoxLiteral) {
-            return (bool)$value->getValue();
-        }
-
-        return true;
     }
 }

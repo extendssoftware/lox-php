@@ -57,7 +57,7 @@ class LoxLiteralFunction implements LoxCallableInterface
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return '<native function>';
     }

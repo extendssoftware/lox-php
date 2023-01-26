@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Count;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Filter;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Get;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Implode;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Map;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Pop;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Push;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Reverse;
@@ -25,8 +27,10 @@ class LoxArray extends LoxLiteral
         $value = $this->value;
         return match ($name->getLexeme()) {
             'count' => new Count($value),
+            'filter' => new Filter($value),
             'get' => new Get($value),
             'implode' => new Implode($value),
+            'map' => new Map($value),
             'pop' => new Pop($value),
             'push' => new Push($value),
             'reverse' => new Reverse($value),

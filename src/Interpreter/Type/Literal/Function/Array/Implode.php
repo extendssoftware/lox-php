@@ -7,7 +7,6 @@ use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\AbstractFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
 use function implode;
-use function strlen;
 
 class Implode extends AbstractFunction
 {
@@ -16,7 +15,7 @@ class Implode extends AbstractFunction
      */
     public function call(InterpreterInterface $interpreter, array $arguments): LoxString
     {
-        $separator = (string)$arguments[0];
+        $separator = (string)($arguments[0] ?? ' ');
 
         return new LoxString(implode($separator, $this->value));
     }
@@ -26,6 +25,6 @@ class Implode extends AbstractFunction
      */
     public function arities(): array
     {
-        return [1];
+        return [0, 1];
     }
 }

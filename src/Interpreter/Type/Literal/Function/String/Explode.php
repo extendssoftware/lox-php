@@ -16,7 +16,7 @@ class Explode extends AbstractFunction
      */
     public function call(InterpreterInterface $interpreter, array $arguments): LoxArray
     {
-        $separator = (string)$arguments[0];
+        $separator = (string)($arguments[0] ?? null);
         if (strlen($separator) === 0) {
             $separator = ' ';
         }
@@ -29,6 +29,6 @@ class Explode extends AbstractFunction
      */
     public function arities(): array
     {
-        return [1];
+        return [0, 1];
     }
 }

@@ -30,6 +30,7 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
+use ExtendsSoftware\LoxPHP\Scanner\Token\Token;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use function array_values;
@@ -521,17 +522,39 @@ class Parser implements ParserInterface
     private function assignment(): ExpressionInterface
     {
         $expression = $this->or();
-        if ($this->match(TokenType::EQUAL)) {
-            $equals = $this->previous();
-            $value = $this->assignment();
+        if ($this->match(
+            TokenType::EQUAL,
+            TokenType::PLUS_EQUAL,
+            TokenType::MINUS_EQUAL,
+            TokenType::SLASH_EQUAL,
+            TokenType::STAR_EQUAL
+        )) {
+            $operator = $this->previous();
+            $assignment = $this->assignment();
 
             if ($expression instanceof VariableExpression) {
-                return new AssignExpression($expression->getName(), $value);
+                $type = match ($operator->getType()) {
+                    TokenType::PLUS_EQUAL => TokenType::PLUS,
+                    TokenType::MINUS_EQUAL => TokenType::MINUS,
+                    TokenType::SLASH_EQUAL => TokenType::SLASH,
+                    TokenType::STAR_EQUAL => TokenType::STAR,
+                    default => TokenType::EQUAL
+                };
+
+                if ($type !== TokenType::EQUAL) {
+                    $assignment = new BinaryExpression(
+                        $expression,
+                        new Token($type, $operator->getLine(), $operator->getColumn(), $operator->getLexeme()),
+                        $assignment
+                    );
+                }
+
+                return new AssignExpression($expression->getName(), $assignment);
             } elseif ($expression instanceof GetExpression) {
-                return new SetExpression($expression->getObject(), $expression->getName(), $value);
+                return new SetExpression($expression->getObject(), $expression->getName(), $assignment);
             }
 
-            throw new ParseError('Invalid assignment target.', $equals->getLine(), $equals->getColumn());
+            throw new ParseError('Invalid assignment target.', $operator->getLine(), $operator->getColumn());
         }
 
         return $expression;

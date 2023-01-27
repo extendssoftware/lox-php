@@ -151,16 +151,16 @@ class Scanner implements ScannerInterface
                 $this->addToken(TokenType::DOT);
                 break;
             case '-':
-                $this->addToken(TokenType::MINUS);
+                $this->addToken($this->match('=') ? TokenType::MINUS_EQUAL : TokenType::MINUS);
                 break;
             case '+':
-                $this->addToken(TokenType::PLUS, '+');
+                $this->addToken($this->match('=') ? TokenType::PLUS_EQUAL : TokenType::PLUS);
                 break;
             case ';':
                 $this->addToken(TokenType::SEMICOLON);
                 break;
             case '*':
-                $this->addToken(TokenType::STAR);
+                $this->addToken($this->match('=') ? TokenType::STAR_EQUAL : TokenType::STAR);
                 break;
             case '!':
                 $this->addToken($this->match('=') ? TokenType::BANG_EQUAL : TokenType::BANG);
@@ -196,6 +196,8 @@ class Scanner implements ScannerInterface
                     if (!$this->hasMore()) {
                         throw new SyntaxError('Unterminated comment', $this->line, $this->column);
                     }
+                } elseif ($this->match('=')) {
+                    $this->addToken(TokenType::SLASH_EQUAL);
                 } else {
                     $this->addToken(TokenType::SLASH);
                 }

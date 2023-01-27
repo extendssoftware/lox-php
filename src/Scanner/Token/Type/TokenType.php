@@ -15,10 +15,14 @@ enum TokenType
     case COMMA;
     case DOT;
     case MINUS;
+    case MINUS_EQUAL;
     case PLUS;
+    case PLUS_EQUAL;
     case SEMICOLON;
     case SLASH;
+    case SLASH_EQUAL;
     case STAR;
+    case STAR_EQUAL;
 
     // One or two character tokens.
     case BANG;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Count;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Each;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Filter;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Get;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Implode;
@@ -27,6 +28,7 @@ class LoxArray extends LoxLiteral
         $value = $this->value;
         return match ($name->getLexeme()) {
             'count' => new Count($value),
+            'each' => new Each($value),
             'filter' => new Filter($value),
             'get' => new Get($value),
             'implode' => new Implode($value),

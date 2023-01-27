@@ -214,7 +214,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
                 $this->checkNumberOperands($operator, $left, $right);
 
                 if ($right->getValue() === 0.0) {
-                    throw new RuntimeError("Can't divide by zero.", $operator->getLine(), $operator->getColumn());
+                    return new LoxNumber(0);
                 }
 
                 return new LoxNumber($left->getValue() / $right->getValue());

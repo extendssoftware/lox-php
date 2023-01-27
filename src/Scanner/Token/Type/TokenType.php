@@ -16,8 +16,10 @@ enum TokenType
     case DOT;
     case MINUS;
     case MINUS_EQUAL;
+    case MINUS_MINUS;
     case PLUS;
     case PLUS_EQUAL;
+    case PLUS_PLUS;
     case SEMICOLON;
     case SLASH;
     case SLASH_EQUAL;

@@ -9,6 +9,8 @@ use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Filter;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Get;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Implode;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Map;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Max;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Min;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Pop;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Push;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Reverse;
@@ -33,6 +35,8 @@ class LoxArray extends LoxLiteral
             'get' => new Get($value),
             'implode' => new Implode($value),
             'map' => new Map($value),
+            'max' => new Max($value),
+            'min' => new Min($value),
             'pop' => new Pop($value),
             'push' => new Push($value),
             'reverse' => new Reverse($value),

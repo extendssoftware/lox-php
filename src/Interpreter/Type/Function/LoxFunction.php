@@ -7,6 +7,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
@@ -38,7 +39,7 @@ class LoxFunction implements LoxCallableInterface
     {
         $environment = new LocalEnvironment($this->closure);
         foreach ($this->declaration->getParameters() as $index => $parameter) {
-            $environment = $environment->define($parameter->getLexeme(), $arguments[$index]);
+            $environment = $environment->define($parameter->getLexeme(), $arguments[$index] ?? new LoxNil());
         }
 
         try {

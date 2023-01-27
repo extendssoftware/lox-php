@@ -48,6 +48,7 @@ use ReflectionClass;
 use ReflectionException;
 use Throwable;
 use TypeError;
+use function array_merge;
 use function array_pop;
 use function fopen;
 use function fwrite;
@@ -205,8 +206,12 @@ class Interpreter implements InterpreterInterface, VisitorInterface
                     return new LoxString($left->getValue() . $right->getValue());
                 }
 
+                if ($left instanceof LoxArray && $right instanceof LoxArray) {
+                    return new LoxArray(array_merge($left->getValue(), $right->getValue()));
+                }
+
                 throw new RuntimeError(
-                    'Operands must be two numbers or two strings.',
+                    'Operands must be two numbers, strings or arrays.',
                     $operator->getLine(),
                     $operator->getColumn()
                 );

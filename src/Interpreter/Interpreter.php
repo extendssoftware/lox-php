@@ -222,6 +222,10 @@ class Interpreter implements InterpreterInterface, VisitorInterface
                 $this->checkNumberOperands($operator, $left, $right);
 
                 return new LoxNumber($left->getValue() * $right->getValue());
+            case TokenType::MODULO:
+                $this->checkNumberOperands($operator, $left, $right);
+
+                return new LoxNumber(fmod($left->getValue(), $right->getValue()));
             default:
                 return new LoxNil();
         }

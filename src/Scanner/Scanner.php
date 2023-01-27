@@ -150,14 +150,17 @@ class Scanner implements ScannerInterface
             case '.':
                 $this->addToken(TokenType::DOT);
                 break;
+            case ';':
+                $this->addToken(TokenType::SEMICOLON);
+                break;
+            case '%':
+                $this->addToken($this->match('=') ? TokenType::MODULO_EQUAL : TokenType::MODULO);
+                break;
             case '-':
                 $this->addToken($this->match('=') ? TokenType::MINUS_EQUAL : TokenType::MINUS);
                 break;
             case '+':
                 $this->addToken($this->match('=') ? TokenType::PLUS_EQUAL : TokenType::PLUS);
-                break;
-            case ';':
-                $this->addToken(TokenType::SEMICOLON);
                 break;
             case '*':
                 $this->addToken($this->match('=') ? TokenType::STAR_EQUAL : TokenType::STAR);

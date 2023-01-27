@@ -527,7 +527,8 @@ class Parser implements ParserInterface
             TokenType::PLUS_EQUAL,
             TokenType::MINUS_EQUAL,
             TokenType::SLASH_EQUAL,
-            TokenType::STAR_EQUAL
+            TokenType::STAR_EQUAL,
+            TokenType::MODULO_EQUAL,
         )) {
             $operator = $this->previous();
             $assignment = $this->assignment();
@@ -538,6 +539,7 @@ class Parser implements ParserInterface
                     TokenType::MINUS_EQUAL => TokenType::MINUS,
                     TokenType::SLASH_EQUAL => TokenType::SLASH,
                     TokenType::STAR_EQUAL => TokenType::STAR,
+                    TokenType::MODULO_EQUAL => TokenType::MODULO,
                     default => TokenType::EQUAL
                 };
 
@@ -655,7 +657,7 @@ class Parser implements ParserInterface
     private function factor(): ExpressionInterface
     {
         $expression = $this->typeof();
-        while ($this->match(TokenType::SLASH, TokenType::STAR)) {
+        while ($this->match(TokenType::SLASH, TokenType::STAR, TokenType::MODULO)) {
             $expression = new BinaryExpression($expression, $this->previous(), $this->typeof());
         }
 

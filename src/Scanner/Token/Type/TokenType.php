@@ -23,6 +23,8 @@ enum TokenType
     case SLASH_EQUAL;
     case STAR;
     case STAR_EQUAL;
+    case MODULO;
+    case MODULO_EQUAL;
 
     // One or two character tokens.
     case BANG;

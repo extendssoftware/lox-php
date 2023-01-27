@@ -6,8 +6,10 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Count;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Each;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Filter;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\First;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Get;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Implode;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Last;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Map;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Max;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\Array\Min;
@@ -32,8 +34,10 @@ class LoxArray extends LoxLiteral
             'count' => new Count($value),
             'each' => new Each($value),
             'filter' => new Filter($value),
+            'first' => new First($value),
             'get' => new Get($value),
             'implode' => new Implode($value),
+            'last' => new Last($value),
             'map' => new Map($value),
             'max' => new Max($value),
             'min' => new Min($value),

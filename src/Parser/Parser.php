@@ -687,22 +687,6 @@ class Parser implements ParserInterface
     {
         if ($this->match(TokenType::BANG, TokenType::MINUS)) {
             return new UnaryExpression($this->previous(), $this->unary());
-        } elseif ($this->match(TokenType::PLUS_PLUS, TokenType::MINUS_MINUS)) {
-            $operator = $this->previous();
-
-            return new AssignExpression(
-                $operator,
-                new BinaryExpression(
-                    $this->unary(),
-                    new Token(
-                        $operator->getType() === TokenType::PLUS_PLUS ? TokenType::PLUS : TokenType::MINUS,
-                        $operator->getLine(),
-                        $operator->getColumn(),
-                        $operator->getLexeme()
-                    ),
-                    new LiteralExpression(TokenType::NUMBER, 1)
-                )
-            );
         }
 
         return $this->call();

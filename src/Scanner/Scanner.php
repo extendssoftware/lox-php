@@ -151,26 +151,10 @@ class Scanner implements ScannerInterface
                 $this->addToken(TokenType::DOT);
                 break;
             case '-':
-                if ($this->match('=')) {
-                    $token = TokenType::MINUS_EQUAL;
-                } elseif ($this->match('-')) {
-                    $token = TokenType::MINUS_MINUS;
-                } else {
-                    $token = TokenType::MINUS;
-                }
-
-                $this->addToken($token);
+                $this->addToken($this->match('=') ? TokenType::MINUS_EQUAL : TokenType::MINUS);
                 break;
             case '+':
-                if ($this->match('=')) {
-                    $token = TokenType::PLUS_EQUAL;
-                } elseif ($this->match('+')) {
-                    $token = TokenType::PLUS_PLUS;
-                } else {
-                    $token = TokenType::PLUS;
-                }
-
-                $this->addToken($token);
+                $this->addToken($this->match('=') ? TokenType::PLUS_EQUAL : TokenType::PLUS);
                 break;
             case ';':
                 $this->addToken(TokenType::SEMICOLON);

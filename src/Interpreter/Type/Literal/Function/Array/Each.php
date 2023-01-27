@@ -7,6 +7,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\LoxFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\AbstractFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
 
 class Each extends AbstractFunction
 {
@@ -17,8 +18,8 @@ class Each extends AbstractFunction
     {
         $callback = $arguments[0];
         if ($callback instanceof LoxFunction) {
-            foreach ($this->value as $value) {
-                $callback->call($interpreter, [$value]);
+            foreach ($this->value as $index => $value) {
+                $callback->call($interpreter, [$value, new LoxNumber($index)]);
             }
         }
 

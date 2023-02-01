@@ -2,8 +2,8 @@
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
+use Closure;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
-use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\Function\ToString;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
@@ -25,7 +25,9 @@ abstract class LoxLiteral extends LoxInstance
     public function get(TokenInterface $name): mixed
     {
         return match ($name->getLexeme()) {
-            'toString' => new ToString($this->value),
+            'toString' => function (): LoxString {
+                return new LoxString((string)$this->value);
+            },
             default => parent::get($name),
         };
     }

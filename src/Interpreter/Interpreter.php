@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
+use Closure;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Global\GlobalEnvironment;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\Local\LocalEnvironment;
@@ -10,6 +11,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Class\LoxClass;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\LoxFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\ReturnValue;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LiteralFunction;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxArray;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxBoolean;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxLiteral;
@@ -238,13 +240,17 @@ class Interpreter implements InterpreterInterface, VisitorInterface
 
     /**
      * @inheritDoc
-     * @throws RuntimeError
+     * @throws RuntimeError|ReflectionException
      */
     public function visitCallExpression(CallExpression $expression): mixed
     {
         $token = $expression->getParen();
 
         $callee = $expression->getCallee()->accept($this);
+        if ($callee instanceof Closure) {
+            $callee = new LiteralFunction($callee);
+        }
+
         if (!$callee instanceof LoxCallableInterface) {
             throw new RuntimeError('Can only call functions and classes.', $token->getLine(), $token->getColumn());
         }
@@ -255,6 +261,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         $count = count($arguments);
+
         $arities = $callee->arities();
         if (!in_array($count, $arities)) {
             $expected = array_pop($arities);

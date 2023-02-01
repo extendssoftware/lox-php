@@ -263,7 +263,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $count = count($arguments);
 
         $arities = $callee->arities();
-        if (!in_array($count, $arities)) {
+        if (!empty($arities) && !in_array($count, $arities)) {
             $expected = array_pop($arities);
             if (count($arities)) {
                 $expected = implode(', ', $arities) . ' or ' . $expected;

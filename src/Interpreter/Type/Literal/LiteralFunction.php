@@ -54,6 +54,10 @@ class LiteralFunction implements LoxCallableInterface
                 continue;
             }
 
+            if ($parameter->isVariadic()) {
+                return [];
+            }
+
             if ($parameter->isOptional()) {
                 $arities[] = $count;
             }

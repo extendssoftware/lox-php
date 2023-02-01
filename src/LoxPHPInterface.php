@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP;
 
-interface LoxInterface
+interface LoxPHPInterface
 {
     /**
      * LoxPHP version.

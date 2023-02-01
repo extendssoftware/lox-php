@@ -11,7 +11,7 @@ use ExtendsSoftware\LoxPHP\Resolver\ResolverInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Scanner;
 use ExtendsSoftware\LoxPHP\Scanner\ScannerInterface;
 
-class Lox implements LoxInterface
+class LoxPHP implements LoxPHPInterface
 {
     /**
      * Lox constructor.

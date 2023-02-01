@@ -8,7 +8,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
-use ExtendsSoftware\LoxPHP\LoxInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use TypeError;
 use function fopen;
@@ -53,7 +53,7 @@ class LoxSystem extends LoxInstance
     {
         return match ($name->getLexeme()) {
             'version' => function (): LoxString {
-                return new LoxString(LoxInterface::VERSION);
+                return new LoxString(LoxPHPInterface::VERSION);
             },
             'time' => function (InterpreterInterface $interpreter, $milliseconds = null): LoxNumber {
                 $format = 'U';

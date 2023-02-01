@@ -26,7 +26,6 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Class\ClassStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Expression\ExpressionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\If\IfStatement;
-use ExtendsSoftware\LoxPHP\Parser\Statement\Print\PrintStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
@@ -368,16 +367,6 @@ class Resolver implements ResolverInterface
         if ($else) {
             $this->resolve($else);
         }
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitPrintStatement(PrintStatement $statement): mixed
-    {
-        $this->resolve($statement->getExpression());
 
         return null;
     }

@@ -24,7 +24,6 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Class\ClassStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Expression\ExpressionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\If\IfStatement;
-use ExtendsSoftware\LoxPHP\Parser\Statement\Print\PrintStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
@@ -230,16 +229,6 @@ interface VisitorInterface
      * @throws LoxExceptionInterface
      */
     public function visitIfStatement(IfStatement $statement): mixed;
-
-    /**
-     * Visit print statement.
-     *
-     * @param PrintStatement $statement
-     *
-     * @return mixed
-     * @throws LoxExceptionInterface
-     */
-    public function visitPrintStatement(PrintStatement $statement): mixed;
 
     /**
      * Visit return statement.

@@ -40,7 +40,6 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Class\ClassStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Expression\ExpressionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\If\IfStatement;
-use ExtendsSoftware\LoxPHP\Parser\Statement\Print\PrintStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
@@ -50,14 +49,11 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
-use TypeError;
 use function array_merge;
 use function array_pop;
-use function fopen;
-use function fwrite;
+use function fmod;
 use function implode;
 use function in_array;
-use function is_resource;
 use function sprintf;
 use function str_replace;
 
@@ -71,13 +67,6 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     private EnvironmentInterface $environment;
 
     /**
-     * Output stream.
-     *
-     * @var resource
-     */
-    private $stream;
-
-    /**
      * Interpreter constructor.
      *
      * @param EnvironmentInterface $globals
@@ -87,17 +76,8 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         private readonly EnvironmentInterface $globals = new GlobalEnvironment(),
         mixed                                 $stream = null
     ) {
-        $stream = $stream ?: fopen('php://stdout', 'w');
-        if (!is_resource($stream)) {
-            throw new TypeError(sprintf(
-                'Stream must be of type resource, %s given.',
-                gettype($stream)
-            ));
-        }
+        $this->globals->define('system', new LoxSystem($stream));
 
-        $globals->define('system', new LoxSystem());
-
-        $this->stream = $stream;
         $this->environment = $this->globals;
     }
 
@@ -530,16 +510,6 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         } elseif ($statement->getElse()) {
             $statement->getElse()->accept($this);
         }
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitPrintStatement(PrintStatement $statement): mixed
-    {
-        fwrite($this->stream, $statement->getExpression()->accept($this) . PHP_EOL);
 
         return null;
     }

@@ -25,7 +25,6 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\Class\ClassStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Expression\ExpressionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Function\FunctionStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\If\IfStatement;
-use ExtendsSoftware\LoxPHP\Parser\Statement\Print\PrintStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Return\ReturnStatement;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\Variable\VariableStatement;
@@ -202,9 +201,6 @@ class Parser implements ParserInterface
         if ($this->match(TokenType::IF)) {
             return $this->ifStatement();
         }
-        if ($this->match(TokenType::PRINT)) {
-            return $this->printStatement();
-        }
         if ($this->match(TokenType::RETURN)) {
             return $this->returnStatement();
         }
@@ -238,20 +234,6 @@ class Parser implements ParserInterface
         }
 
         return new IfStatement($condition, $then, $else);
-    }
-
-    /**
-     * Print statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function printStatement(): StatementInterface
-    {
-        $value = $this->expression();
-        $this->consume(TokenType::SEMICOLON, "Expect ';' after value.");
-
-        return new PrintStatement($value);
     }
 
     /**

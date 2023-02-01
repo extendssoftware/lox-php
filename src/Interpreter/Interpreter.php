@@ -19,6 +19,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxSystem;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
@@ -93,6 +94,8 @@ class Interpreter implements InterpreterInterface, VisitorInterface
                 gettype($stream)
             ));
         }
+
+        $globals->define('system', new LoxSystem());
 
         $this->stream = $stream;
         $this->environment = $this->globals;

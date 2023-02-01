@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Resolver;
 
 use ArrayObject;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
@@ -492,7 +492,7 @@ class Resolver implements ResolverInterface
      * @param FunctionType       $type
      *
      * @return void
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
     {

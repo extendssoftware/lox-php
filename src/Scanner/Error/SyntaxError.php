@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Scanner\Error;
 
 use Exception;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use function sprintf;
 
-class SyntaxError extends Exception implements LoxExceptionInterface
+class SyntaxError extends Exception implements LoxPHPExceptionInterface
 {
     /**
      * SyntaxError constructor.

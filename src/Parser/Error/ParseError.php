@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Parser\Error;
 
 use Exception;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use function sprintf;
 
-class ParseError extends Exception implements LoxExceptionInterface
+class ParseError extends Exception implements LoxPHPExceptionInterface
 {
     /**
      * ParseError constructor.

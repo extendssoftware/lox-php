@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Resolver;
 
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
@@ -16,7 +16,7 @@ interface ResolverInterface extends VisitorInterface
      * @param ExpressionInterface|StatementInterface $statement
      *
      * @return ResolverInterface
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function resolve(ExpressionInterface|StatementInterface $statement): ResolverInterface;
 
@@ -26,7 +26,7 @@ interface ResolverInterface extends VisitorInterface
      * @param array<ExpressionInterface|StatementInterface> $statements
      *
      * @return ResolverInterface
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function resolveAll(array $statements): ResolverInterface;
 }

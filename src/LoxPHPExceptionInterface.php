@@ -5,6 +5,6 @@ namespace ExtendsSoftware\LoxPHP;
 
 use Throwable;
 
-interface LoxExceptionInterface extends Throwable
+interface LoxPHPExceptionInterface extends Throwable
 {
 }

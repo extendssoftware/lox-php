@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser;
 
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Array\ArrayExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Assign\AssignExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Binary\BinaryExpression;
@@ -36,7 +36,7 @@ interface VisitorInterface
      * @param ArrayExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitArrayExpression(ArrayExpression $expression): mixed;
 
@@ -46,7 +46,7 @@ interface VisitorInterface
      * @param AssignExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitAssignExpression(AssignExpression $expression): mixed;
 
@@ -56,7 +56,7 @@ interface VisitorInterface
      * @param BinaryExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitBinaryExpression(BinaryExpression $expression): mixed;
 
@@ -66,7 +66,7 @@ interface VisitorInterface
      * @param CallExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitCallExpression(CallExpression $expression): mixed;
 
@@ -76,7 +76,7 @@ interface VisitorInterface
      * @param FunctionExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitFunctionExpression(FunctionExpression $expression): mixed;
 
@@ -86,7 +86,7 @@ interface VisitorInterface
      * @param GetExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitGetExpression(GetExpression $expression): mixed;
 
@@ -96,7 +96,7 @@ interface VisitorInterface
      * @param GroupingExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitGroupingExpression(GroupingExpression $expression): mixed;
 
@@ -106,7 +106,7 @@ interface VisitorInterface
      * @param LiteralExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitLiteralExpression(LiteralExpression $expression): mixed;
 
@@ -116,7 +116,7 @@ interface VisitorInterface
      * @param LogicalExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitLogicalExpression(LogicalExpression $expression): mixed;
 
@@ -126,7 +126,7 @@ interface VisitorInterface
      * @param SetExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitSetExpression(SetExpression $expression): mixed;
 
@@ -136,7 +136,7 @@ interface VisitorInterface
      * @param SuperExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitSuperExpression(SuperExpression $expression): mixed;
 
@@ -146,7 +146,7 @@ interface VisitorInterface
      * @param ThisExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitThisExpression(ThisExpression $expression): mixed;
 
@@ -156,7 +156,7 @@ interface VisitorInterface
      * @param TypeofExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitTypeofExpression(TypeofExpression $expression): mixed;
 
@@ -166,7 +166,7 @@ interface VisitorInterface
      * @param UnaryExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitUnaryExpression(UnaryExpression $expression): mixed;
 
@@ -176,7 +176,7 @@ interface VisitorInterface
      * @param VariableExpression $expression
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitVariableExpression(VariableExpression $expression): mixed;
 
@@ -186,7 +186,7 @@ interface VisitorInterface
      * @param BlockStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitBlockStatement(BlockStatement $statement): mixed;
 
@@ -196,7 +196,7 @@ interface VisitorInterface
      * @param ClassStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitClassStatement(ClassStatement $statement): mixed;
 
@@ -206,7 +206,7 @@ interface VisitorInterface
      * @param ExpressionStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitExpressionStatement(ExpressionStatement $statement): mixed;
 
@@ -216,7 +216,7 @@ interface VisitorInterface
      * @param FunctionStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitFunctionStatement(FunctionStatement $statement): mixed;
 
@@ -226,7 +226,7 @@ interface VisitorInterface
      * @param IfStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitIfStatement(IfStatement $statement): mixed;
 
@@ -236,7 +236,7 @@ interface VisitorInterface
      * @param ReturnStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitReturnStatement(ReturnStatement $statement): mixed;
 
@@ -246,7 +246,7 @@ interface VisitorInterface
      * @param VariableStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitVariableStatement(VariableStatement $statement): mixed;
 
@@ -256,7 +256,7 @@ interface VisitorInterface
      * @param WhileStatement $statement
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function visitWhileStatement(WhileStatement $statement): mixed;
 }

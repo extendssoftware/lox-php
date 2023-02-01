@@ -16,7 +16,7 @@ interface LoxPHPInterface
      * @param string $source
      *
      * @return void
-     * @throws LoxExceptionInterface When failed to run source code.
+     * @throws LoxPHPExceptionInterface When failed to run source code.
      */
     public function run(string $source): void;
 }

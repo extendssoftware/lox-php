@@ -3,10 +3,10 @@
 namespace ExtendsSoftware\LoxPHP\Interpreter\Error;
 
 use Exception;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use function sprintf;
 
-class RuntimeError extends Exception implements LoxExceptionInterface
+class RuntimeError extends Exception implements LoxPHPExceptionInterface
 {
     /**
      * RuntimeError constructor.

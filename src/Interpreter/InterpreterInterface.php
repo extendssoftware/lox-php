@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 
 interface InterpreterInterface
@@ -15,7 +15,7 @@ interface InterpreterInterface
      * @param array<StatementInterface> $statements
      *
      * @return InterpreterInterface
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function execute(array $statements): InterpreterInterface;
 
@@ -26,7 +26,7 @@ interface InterpreterInterface
      * @param EnvironmentInterface      $environment
      *
      * @return InterpreterInterface
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function executeBlock(array $statements, EnvironmentInterface $environment): InterpreterInterface;
 

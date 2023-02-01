@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression;
 
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 
 interface ExpressionInterface
@@ -14,7 +14,7 @@ interface ExpressionInterface
      * @param VisitorInterface $visitor
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function accept(VisitorInterface $visitor): mixed;
 }

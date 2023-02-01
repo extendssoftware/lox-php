@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Function;
 
 use Exception;
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 
-class ReturnValue extends Exception implements LoxExceptionInterface
+class ReturnValue extends Exception implements LoxPHPExceptionInterface
 {
     /**
      * ReturnError constructor.

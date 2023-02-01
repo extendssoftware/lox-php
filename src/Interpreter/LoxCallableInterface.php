@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
-use ExtendsSoftware\LoxPHP\LoxExceptionInterface;
+use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
 use Stringable;
 
 interface LoxCallableInterface extends Stringable
@@ -15,7 +15,7 @@ interface LoxCallableInterface extends Stringable
      * @param array<int, mixed>    $arguments
      *
      * @return mixed
-     * @throws LoxExceptionInterface
+     * @throws LoxPHPExceptionInterface
      */
     public function call(InterpreterInterface $interpreter, array $arguments): mixed;
 

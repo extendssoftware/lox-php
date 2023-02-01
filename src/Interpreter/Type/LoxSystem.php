@@ -6,6 +6,8 @@ use Closure;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
+use ExtendsSoftware\LoxPHP\LoxInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use TypeError;
 use function fopen;
@@ -52,6 +54,9 @@ class LoxSystem extends LoxInstance
     public function get(TokenInterface $name): Closure
     {
         return match ($name->getLexeme()) {
+            'version' => function (): LoxString {
+                return new LoxString(LoxInterface::VERSION);
+            },
             'time' => function (InterpreterInterface $interpreter, $milliseconds = null): LoxNumber {
                 if ($milliseconds && $interpreter->isTruthy($milliseconds)) {
                     $time = round(microtime(true) * 1000);

@@ -6,6 +6,11 @@ namespace ExtendsSoftware\LoxPHP;
 interface LoxInterface
 {
     /**
+     * LoxPHP version.
+     */
+    public const VERSION = '0.1.0';
+
+    /**
      * Run source code.
      *
      * @param string $source

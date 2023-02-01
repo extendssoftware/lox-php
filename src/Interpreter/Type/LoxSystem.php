@@ -3,6 +3,7 @@
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
 
 use Closure;
+use DateTime;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNumber;
@@ -14,10 +15,7 @@ use function fopen;
 use function fwrite;
 use function implode;
 use function is_resource;
-use function microtime;
-use function round;
 use function sprintf;
-use function time;
 
 class LoxSystem extends LoxInstance
 {
@@ -58,16 +56,23 @@ class LoxSystem extends LoxInstance
                 return new LoxString(LoxInterface::VERSION);
             },
             'time' => function (InterpreterInterface $interpreter, $milliseconds = null): LoxNumber {
+                $format = 'U';
                 if ($milliseconds && $interpreter->isTruthy($milliseconds)) {
-                    $time = round(microtime(true) * 1000);
-                } else {
-                    $time = time();
+                    $format .= 'v';
                 }
 
-                return new LoxNumber($time);
+                return new LoxNumber((new DateTime())->format($format));
             },
             'print' => function (...$messages): LoxNil {
                 fwrite($this->stream, implode('', $messages) . PHP_EOL);
+
+                return new LoxNil();
+            },
+            'log' => function (...$messages): LoxNil {
+                fwrite(
+                    $this->stream,
+                    (new DateTime())->format('Y-m-d H:i:s.v: ') . implode('', $messages) . PHP_EOL
+                );
 
                 return new LoxNil();
             },

@@ -2,7 +2,6 @@
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
-use Closure;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;

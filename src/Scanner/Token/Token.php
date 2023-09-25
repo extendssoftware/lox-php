@@ -59,7 +59,9 @@ readonly class Token implements TokenInterface
     }
 
     /**
-     * @inheritDoc
+     * Get string representation.
+     *
+     * @return string
      */
     public function __toString(): string
     {

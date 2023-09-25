@@ -71,7 +71,9 @@ readonly class LoxFunction implements LoxCallableInterface
     }
 
     /**
-     * @inheritDoc
+     * Get string representation.
+     *
+     * @return string
      */
     public function __toString(): string
     {

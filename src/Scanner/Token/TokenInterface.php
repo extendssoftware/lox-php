@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Scanner\Token;
 
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
-use Stringable;
 
-interface TokenInterface extends Stringable
+interface TokenInterface
 {
     /**
      * Get token type.

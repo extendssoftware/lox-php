@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\LoxPHP\Interpreter;
 
 use ExtendsSoftware\LoxPHP\LoxPHPExceptionInterface;
-use Stringable;
 
-interface LoxCallableInterface extends Stringable
+interface LoxCallableInterface
 {
     /**
      * Call callable.

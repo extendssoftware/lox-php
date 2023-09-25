@@ -7,12 +7,11 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Class\LoxClass;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
-use Stringable;
 
 use function array_key_exists;
 use function sprintf;
 
-class LoxInstance implements Stringable
+class LoxInstance
 {
     /**
      * LoxInstance constructor.
@@ -65,7 +64,9 @@ class LoxInstance implements Stringable
     }
 
     /**
-     * @inheritDoc
+     * Get string representation.
+     *
+     * @return string
      */
     public function __toString(): string
     {

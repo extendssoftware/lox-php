@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Scanner;
@@ -7,6 +8,7 @@ use ExtendsSoftware\LoxPHP\Scanner\Error\SyntaxError;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Token;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
+
 use function array_slice;
 use function array_splice;
 use function count;
@@ -113,6 +115,16 @@ class Scanner implements ScannerInterface
         $this->addToken(TokenType::EOF, 'EOF');
 
         return $this->tokens;
+    }
+
+    /**
+     * Check if there are more characters to consume.
+     *
+     * @return bool
+     */
+    private function hasMore(): bool
+    {
+        return $this->position < count($this->characters);
     }
 
     /**
@@ -269,44 +281,6 @@ class Scanner implements ScannerInterface
     }
 
     /**
-     * Add token.
-     *
-     * @param TokenType $type
-     * @param mixed     $lexeme
-     *
-     * @return void
-     */
-    private function addToken(TokenType $type, mixed $lexeme = null): void
-    {
-        $this->tokens[] = new Token(
-            $type,
-            $this->line,
-            $this->column - ($this->position - $this->start),
-            $lexeme ?? $this->getSubstring($this->start, $this->position)
-        );
-    }
-
-    /**
-     * Get current character.
-     *
-     * @return string
-     */
-    private function current(): string
-    {
-        return $this->characters[$this->position] ?? "\0";
-    }
-
-    /**
-     * Peek next character.
-     *
-     * @return string
-     */
-    private function peek(): string
-    {
-        return $this->characters[$this->position + 1] ?? "\0";
-    }
-
-    /**
      * Consume character and set pointer to next position.
      *
      * @return string
@@ -322,6 +296,37 @@ class Scanner implements ScannerInterface
         }
 
         return $consumed;
+    }
+
+    /**
+     * Add token.
+     *
+     * @param TokenType $type
+     * @param mixed $lexeme
+     *
+     * @return void
+     */
+    private function addToken(TokenType $type, mixed $lexeme = null): void
+    {
+        $this->tokens[] = new Token(
+            $type,
+            $this->line,
+            $this->column - ($this->position - $this->start),
+            $lexeme ?? $this->getSubstring($this->start, $this->position)
+        );
+    }
+
+    /**
+     * Get substring from source.
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return string
+     */
+    private function getSubstring(int $start, int $end): string
+    {
+        return implode('', array_slice($this->characters, $start, $end - $start));
     }
 
     /**
@@ -342,25 +347,22 @@ class Scanner implements ScannerInterface
     }
 
     /**
-     * Check if there are more characters to consume.
-     *
-     * @return bool
-     */
-    private function hasMore(): bool
-    {
-        return $this->position < count($this->characters);
-    }
-
-    /**
-     * Get substring from source.
-     *
-     * @param int $start
-     * @param int $end
+     * Get current character.
      *
      * @return string
      */
-    private function getSubstring(int $start, int $end): string
+    private function current(): string
     {
-        return implode('', array_slice($this->characters, $start, $end - $start));
+        return $this->characters[$this->position] ?? "\0";
+    }
+
+    /**
+     * Peek next character.
+     *
+     * @return string
+     */
+    private function peek(): string
+    {
+        return $this->characters[$this->position + 1] ?? "\0";
     }
 }

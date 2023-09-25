@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser;
@@ -32,6 +33,7 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\While\WhileStatement;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Token;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
+
 use function array_values;
 use function sprintf;
 
@@ -67,6 +69,26 @@ class Parser implements ParserInterface
     }
 
     /**
+     * Check if current token matches EOF token type.
+     *
+     * @return bool
+     */
+    private function isAtEnd(): bool
+    {
+        return $this->current()->getType() === TokenType::EOF;
+    }
+
+    /**
+     * Get next token.
+     *
+     * @return TokenInterface
+     */
+    private function current(): TokenInterface
+    {
+        return $this->tokens[$this->current];
+    }
+
+    /**
      * Declaration.
      *
      * @throws ParseError
@@ -86,6 +108,65 @@ class Parser implements ParserInterface
         }
 
         return $this->statement();
+    }
+
+    /**
+     * Check if current position matches any of the token types.
+     *
+     * @param TokenType ...$types
+     *
+     * @return bool
+     */
+    private function match(TokenType...$types): bool
+    {
+        foreach ($types as $type) {
+            if ($this->check($type)) {
+                $this->advance();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if current position matches token type.
+     *
+     * @param TokenType $type
+     *
+     * @return bool
+     */
+    private function check(TokenType $type): bool
+    {
+        if ($this->isAtEnd()) {
+            return false;
+        }
+
+        return $this->current()->getType() === $type;
+    }
+
+    /**
+     * Move to next token and return current.
+     *
+     * @return TokenInterface
+     */
+    private function advance(): TokenInterface
+    {
+        if (!$this->isAtEnd()) {
+            $this->current++;
+        }
+
+        return $this->previous();
+    }
+
+    /**
+     * Get previous token.
+     *
+     * @return TokenInterface
+     */
+    private function previous(): TokenInterface
+    {
+        return $this->tokens[$this->current - 1];
     }
 
     /**
@@ -114,6 +195,25 @@ class Parser implements ParserInterface
         $this->consume(TokenType::RIGHT_BRACE, "Expect '}' after body class.'");
 
         return new ClassStatement($name, $superclass, $methods);
+    }
+
+    /**
+     * Consume token.
+     *
+     * @param TokenType $expected
+     * @param string $reason
+     *
+     * @return TokenInterface
+     * @throws ParseError When current token is not of expected type.
+     */
+    private function consume(TokenType $expected, string $reason): TokenInterface
+    {
+        if ($this->check($expected)) {
+            return $this->advance();
+        }
+
+        $token = $this->current();
+        throw new ParseError($reason, $token->getLine(), $token->getColumn());
     }
 
     /**
@@ -168,94 +268,6 @@ class Parser implements ParserInterface
     }
 
     /**
-     * Variable declaration.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function variableDeclaration(): StatementInterface
-    {
-        $name = $this->consume(TokenType::IDENTIFIER, 'Expect variable name.');
-
-        $initializer = null;
-        if ($this->match(TokenType::EQUAL)) {
-            $initializer = $this->expression();
-        }
-
-        $this->consume(TokenType::SEMICOLON, "Expect ';' after variable declaration.");
-
-        return new VariableStatement($name, $initializer);
-    }
-
-    /**
-     * Statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function statement(): StatementInterface
-    {
-        if ($this->match(TokenType::FOR)) {
-            return $this->forStatement();
-        }
-        if ($this->match(TokenType::IF)) {
-            return $this->ifStatement();
-        }
-        if ($this->match(TokenType::RETURN)) {
-            return $this->returnStatement();
-        }
-        if ($this->match(TokenType::WHILE)) {
-            return $this->whileStatement();
-        }
-        if ($this->match(TokenType::LEFT_BRACE)) {
-            return new BlockStatement($this->blockStatement());
-        }
-
-        return $this->expressionStatement();
-    }
-
-    /**
-     * If statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function ifStatement(): StatementInterface
-    {
-        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after 'if''.");
-        $condition = $this->expression();
-        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after if condition.");
-
-        $then = $this->statement();
-
-        $else = null;
-        if ($this->match(TokenType::ELSE)) {
-            $else = $this->statement();
-        }
-
-        return new IfStatement($condition, $then, $else);
-    }
-
-    /**
-     * Return statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function returnStatement(): StatementInterface
-    {
-        $keyword = $this->previous();
-        $value = null;
-        if (!$this->check(TokenType::SEMICOLON)) {
-            $value = $this->expression();
-        }
-
-        $this->consume(TokenType::SEMICOLON, "Expect ';' after return value.");
-
-        return new ReturnStatement($keyword, $value);
-    }
-
-    /**
      * Block statement.
      *
      * @return array<StatementInterface>
@@ -271,123 +283,6 @@ class Parser implements ParserInterface
         $this->consume(TokenType::RIGHT_BRACE, "Expect '}' after block.");
 
         return $statements;
-    }
-
-    /**
-     * Expression statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function expressionStatement(): StatementInterface
-    {
-        $expression = $this->expression();
-        $this->consume(TokenType::SEMICOLON, "Expect ';' after expression.");
-
-        return new ExpressionStatement($expression);
-    }
-
-    /**
-     * While statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function whileStatement(): StatementInterface
-    {
-        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after while.");
-        $condition = $this->expression();
-        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after condition.");
-        $body = $this->statement();
-
-        return new WhileStatement($condition, $body);
-    }
-
-    /**
-     * For statement.
-     *
-     * @return StatementInterface
-     * @throws ParseError
-     */
-    private function forStatement(): StatementInterface
-    {
-        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after for.");
-
-        if ($this->match(TokenType::SEMICOLON)) {
-            $initializer = null;
-        } elseif ($this->match(TokenType::VAR)) {
-            $initializer = $this->variableDeclaration();
-        } else {
-            $initializer = $this->expressionStatement();
-        }
-
-        $condition = null;
-        if (!$this->check(TokenType::SEMICOLON)) {
-            $condition = $this->expression();
-        }
-
-        $this->consume(TokenType::SEMICOLON, "Expect ';' after loop condition.");
-
-        $increment = null;
-        if (!$this->check(TokenType::RIGHT_PAREN)) {
-            $increment = $this->expression();
-        }
-
-        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after for clauses.");
-
-        $body = $this->statement();
-        if ($increment) {
-            $body = new BlockStatement([
-                $body,
-                new ExpressionStatement($increment),
-            ]);
-        }
-
-        if (!$condition) {
-            $condition = new LiteralExpression(TokenType::TRUE, true);
-        }
-
-        $body = new WhileStatement($condition, $body);
-        if ($initializer) {
-            $body = new BlockStatement([$initializer, $body]);
-        }
-
-        return $body;
-    }
-
-    /**
-     * Check if current position matches any of the token types.
-     *
-     * @param TokenType ...$types
-     *
-     * @return bool
-     */
-    private function match(TokenType...$types): bool
-    {
-        foreach ($types as $type) {
-            if ($this->check($type)) {
-                $this->advance();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if current position matches token type.
-     *
-     * @param TokenType $type
-     *
-     * @return bool
-     */
-    private function check(TokenType $type): bool
-    {
-        if ($this->isAtEnd()) {
-            return false;
-        }
-
-        return $this->current()->getType() === $type;
     }
 
     /**
@@ -412,69 +307,6 @@ class Parser implements ParserInterface
     }
 
     /**
-     * Move to next token and return current.
-     *
-     * @return TokenInterface
-     */
-    private function advance(): TokenInterface
-    {
-        if (!$this->isAtEnd()) {
-            $this->current++;
-        }
-
-        return $this->previous();
-    }
-
-    /**
-     * Consume token.
-     *
-     * @param TokenType $expected
-     * @param string    $reason
-     *
-     * @return TokenInterface
-     * @throws ParseError When current token is not of expected type.
-     */
-    private function consume(TokenType $expected, string $reason): TokenInterface
-    {
-        if ($this->check($expected)) {
-            return $this->advance();
-        }
-
-        $token = $this->current();
-        throw new ParseError($reason, $token->getLine(), $token->getColumn());
-    }
-
-    /**
-     * Check if current token matches EOF token type.
-     *
-     * @return bool
-     */
-    private function isAtEnd(): bool
-    {
-        return $this->current()->getType() === TokenType::EOF;
-    }
-
-    /**
-     * Get next token.
-     *
-     * @return TokenInterface
-     */
-    private function current(): TokenInterface
-    {
-        return $this->tokens[$this->current];
-    }
-
-    /**
-     * Get previous token.
-     *
-     * @return TokenInterface
-     */
-    private function previous(): TokenInterface
-    {
-        return $this->tokens[$this->current - 1];
-    }
-
-    /**
      * Get next token.
      *
      * @return TokenInterface|null
@@ -482,6 +314,26 @@ class Parser implements ParserInterface
     private function next(): ?TokenInterface
     {
         return $this->tokens[$this->current + 1] ?? null;
+    }
+
+    /**
+     * Variable declaration.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function variableDeclaration(): StatementInterface
+    {
+        $name = $this->consume(TokenType::IDENTIFIER, 'Expect variable name.');
+
+        $initializer = null;
+        if ($this->match(TokenType::EQUAL)) {
+            $initializer = $this->expression();
+        }
+
+        $this->consume(TokenType::SEMICOLON, "Expect ';' after variable declaration.");
+
+        return new VariableStatement($name, $initializer);
     }
 
     /**
@@ -793,5 +645,155 @@ class Parser implements ParserInterface
 
         $token = $this->current();
         throw new ParseError('Expression expected.', $token->getLine(), $token->getColumn());
+    }
+
+    /**
+     * Statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function statement(): StatementInterface
+    {
+        if ($this->match(TokenType::FOR)) {
+            return $this->forStatement();
+        }
+        if ($this->match(TokenType::IF)) {
+            return $this->ifStatement();
+        }
+        if ($this->match(TokenType::RETURN)) {
+            return $this->returnStatement();
+        }
+        if ($this->match(TokenType::WHILE)) {
+            return $this->whileStatement();
+        }
+        if ($this->match(TokenType::LEFT_BRACE)) {
+            return new BlockStatement($this->blockStatement());
+        }
+
+        return $this->expressionStatement();
+    }
+
+    /**
+     * For statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function forStatement(): StatementInterface
+    {
+        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after for.");
+
+        if ($this->match(TokenType::SEMICOLON)) {
+            $initializer = null;
+        } elseif ($this->match(TokenType::VAR)) {
+            $initializer = $this->variableDeclaration();
+        } else {
+            $initializer = $this->expressionStatement();
+        }
+
+        $condition = null;
+        if (!$this->check(TokenType::SEMICOLON)) {
+            $condition = $this->expression();
+        }
+
+        $this->consume(TokenType::SEMICOLON, "Expect ';' after loop condition.");
+
+        $increment = null;
+        if (!$this->check(TokenType::RIGHT_PAREN)) {
+            $increment = $this->expression();
+        }
+
+        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        $body = $this->statement();
+        if ($increment) {
+            $body = new BlockStatement([
+                $body,
+                new ExpressionStatement($increment),
+            ]);
+        }
+
+        if (!$condition) {
+            $condition = new LiteralExpression(TokenType::TRUE, true);
+        }
+
+        $body = new WhileStatement($condition, $body);
+        if ($initializer) {
+            $body = new BlockStatement([$initializer, $body]);
+        }
+
+        return $body;
+    }
+
+    /**
+     * Expression statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function expressionStatement(): StatementInterface
+    {
+        $expression = $this->expression();
+        $this->consume(TokenType::SEMICOLON, "Expect ';' after expression.");
+
+        return new ExpressionStatement($expression);
+    }
+
+    /**
+     * If statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function ifStatement(): StatementInterface
+    {
+        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after 'if''.");
+        $condition = $this->expression();
+        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after if condition.");
+
+        $then = $this->statement();
+
+        $else = null;
+        if ($this->match(TokenType::ELSE)) {
+            $else = $this->statement();
+        }
+
+        return new IfStatement($condition, $then, $else);
+    }
+
+    /**
+     * Return statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function returnStatement(): StatementInterface
+    {
+        $keyword = $this->previous();
+        $value = null;
+        if (!$this->check(TokenType::SEMICOLON)) {
+            $value = $this->expression();
+        }
+
+        $this->consume(TokenType::SEMICOLON, "Expect ';' after return value.");
+
+        return new ReturnStatement($keyword, $value);
+    }
+
+    /**
+     * While statement.
+     *
+     * @return StatementInterface
+     * @throws ParseError
+     */
+    private function whileStatement(): StatementInterface
+    {
+        $this->consume(TokenType::LEFT_PAREN, "Expect '(' after while.");
+        $condition = $this->expression();
+        $this->consume(TokenType::RIGHT_PAREN, "Expect ')' after condition.");
+        $body = $this->statement();
+
+        return new WhileStatement($condition, $body);
     }
 }

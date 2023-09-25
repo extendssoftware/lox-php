@@ -8,16 +8,17 @@ use ExtendsSoftware\LoxPHP\Interpreter\LoxCallableInterface;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionNamedType;
+
 use function array_splice;
 
-class LiteralFunction implements LoxCallableInterface
+readonly class LiteralFunction implements LoxCallableInterface
 {
     /**
      * LiteralFunction constructor.
      *
      * @param Closure $function
      */
-    public function __construct(readonly private Closure $function)
+    public function __construct(private Closure $function)
     {
     }
 
@@ -73,7 +74,7 @@ class LiteralFunction implements LoxCallableInterface
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return '<native function>';
     }

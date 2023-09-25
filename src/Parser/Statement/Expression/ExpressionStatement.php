@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\Expression;
@@ -7,14 +8,14 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 
-class ExpressionStatement implements StatementInterface
+readonly class ExpressionStatement implements StatementInterface
 {
     /**
      * ExpressionStatement constructor.
      *
      * @param ExpressionInterface $expression
      */
-    public function __construct(private readonly ExpressionInterface $expression)
+    public function __construct(private ExpressionInterface $expression)
     {
     }
 

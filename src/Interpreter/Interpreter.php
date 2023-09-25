@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
@@ -49,6 +50,7 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
+
 use function array_merge;
 use function array_pop;
 use function fmod;
@@ -70,11 +72,11 @@ class Interpreter implements InterpreterInterface, VisitorInterface
      * Interpreter constructor.
      *
      * @param EnvironmentInterface $globals
-     * @param resource             $stream
+     * @param resource $stream
      */
     public function __construct(
         private readonly EnvironmentInterface $globals = new GlobalEnvironment(),
-        mixed                                 $stream = null
+        mixed $stream = null
     ) {
         $this->globals->define('system', new LoxSystem($stream));
 
@@ -91,36 +93,6 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function executeBlock(array $statements, EnvironmentInterface $environment): InterpreterInterface
-    {
-        $previous = $this->environment;
-        try {
-            $this->environment = $environment;
-            foreach ($statements as $statement) {
-                $statement->accept($this);
-            }
-        } finally {
-            $this->environment = $previous;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isTruthy(mixed $value): bool
-    {
-        if ($value instanceof LoxLiteral) {
-            return (bool)$value->getValue();
-        }
-
-        return true;
     }
 
     /**
@@ -218,6 +190,23 @@ class Interpreter implements InterpreterInterface, VisitorInterface
                 return new LoxNumber(fmod($left->getValue(), $right->getValue()));
             default:
                 return new LoxNil();
+        }
+    }
+
+    /**
+     * Check if right hand side is a number.
+     *
+     * @param TokenInterface $operator
+     * @param mixed $left
+     * @param mixed $right
+     *
+     * @return void
+     * @throws RuntimeError
+     */
+    private function checkNumberOperands(TokenInterface $operator, mixed $left, mixed $right): void
+    {
+        if (!$left instanceof LoxNumber || !$right instanceof LoxNumber) {
+            throw new RuntimeError('Operands must be numbers.', $operator->getLine(), $operator->getColumn());
         }
     }
 
@@ -333,6 +322,18 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
+    public function isTruthy(mixed $value): bool
+    {
+        if ($value instanceof LoxLiteral) {
+            return (bool)$value->getValue();
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function visitSetExpression(SetExpression $expression): mixed
     {
         $name = $expression->getName();
@@ -411,6 +412,22 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     }
 
     /**
+     * Check if right hand side is a number.
+     *
+     * @param TokenInterface $operator
+     * @param mixed $operand
+     *
+     * @return void
+     * @throws RuntimeError
+     */
+    private function checkNumberOperand(TokenInterface $operator, mixed $operand): void
+    {
+        if (!$operand instanceof LoxNumber) {
+            throw new RuntimeError('Operand must be a number.', $operator->getLine(), $operator->getColumn());
+        }
+    }
+
+    /**
      * @inheritDoc
      * @throws RuntimeError
      */
@@ -422,7 +439,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitBlockStatement(BlockStatement $statement): mixed
+    public function visitBlockStatement(BlockStatement $statement): null
     {
         $this->executeBlock($statement->getStatements(), new LocalEnvironment($this->environment));
 
@@ -432,7 +449,25 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitClassStatement(ClassStatement $statement): mixed
+    public function executeBlock(array $statements, EnvironmentInterface $environment): InterpreterInterface
+    {
+        $previous = $this->environment;
+        try {
+            $this->environment = $environment;
+            foreach ($statements as $statement) {
+                $statement->accept($this);
+            }
+        } finally {
+            $this->environment = $previous;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitClassStatement(ClassStatement $statement): null
     {
         $name = $statement->getName();
 
@@ -480,7 +515,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitExpressionStatement(ExpressionStatement $statement): mixed
+    public function visitExpressionStatement(ExpressionStatement $statement): null
     {
         $statement->getExpression()->accept($this);
 
@@ -490,7 +525,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitFunctionStatement(FunctionStatement $statement): mixed
+    public function visitFunctionStatement(FunctionStatement $statement): null
     {
         $this->environment = $this->environment->define(
             $statement->getName()->getLexeme(),
@@ -503,7 +538,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitIfStatement(IfStatement $statement): mixed
+    public function visitIfStatement(IfStatement $statement): null
     {
         if ($this->isTruthy($statement->getCondition()->accept($this))) {
             $statement->getThen()->accept($this);
@@ -527,7 +562,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitVariableStatement(VariableStatement $statement): mixed
+    public function visitVariableStatement(VariableStatement $statement): null
     {
         $this->environment = $this->environment->define(
             $statement->getName()->getLexeme(),
@@ -540,45 +575,12 @@ class Interpreter implements InterpreterInterface, VisitorInterface
     /**
      * @inheritDoc
      */
-    public function visitWhileStatement(WhileStatement $statement): mixed
+    public function visitWhileStatement(WhileStatement $statement): null
     {
         while ($this->isTruthy($statement->getCondition()->accept($this))) {
             $statement->getBody()->accept($this);
         }
 
         return null;
-    }
-
-    /**
-     * Check if right hand side is a number.
-     *
-     * @param TokenInterface $operator
-     * @param mixed          $operand
-     *
-     * @return void
-     * @throws RuntimeError
-     */
-    private function checkNumberOperand(TokenInterface $operator, mixed $operand): void
-    {
-        if (!$operand instanceof LoxNumber) {
-            throw new RuntimeError('Operand must be a number.', $operator->getLine(), $operator->getColumn());
-        }
-    }
-
-    /**
-     * Check if right hand side is a number.
-     *
-     * @param TokenInterface $operator
-     * @param mixed          $left
-     * @param mixed          $right
-     *
-     * @return void
-     * @throws RuntimeError
-     */
-    private function checkNumberOperands(TokenInterface $operator, mixed $left, mixed $right): void
-    {
-        if (!$left instanceof LoxNumber || !$right instanceof LoxNumber) {
-            throw new RuntimeError('Operands must be numbers.', $operator->getLine(), $operator->getColumn());
-        }
     }
 }

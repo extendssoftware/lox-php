@@ -11,6 +11,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxString;
 use ExtendsSoftware\LoxPHP\LoxPHPInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use TypeError;
+
 use function fopen;
 use function fwrite;
 use function implode;
@@ -37,10 +38,12 @@ class LoxSystem extends LoxInstance
 
         $stream = $stream ?: fopen('php://stdout', 'w');
         if (!is_resource($stream)) {
-            throw new TypeError(sprintf(
-                'Stream must be of type resource, %s given.',
-                gettype($stream)
-            ));
+            throw new TypeError(
+                sprintf(
+                    'Stream must be of type resource, %s given.',
+                    gettype($stream)
+                )
+            );
         }
 
         $this->stream = $stream;

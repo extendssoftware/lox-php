@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Assign;
@@ -7,17 +8,17 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class AssignExpression implements ExpressionInterface
+readonly class AssignExpression implements ExpressionInterface
 {
     /**
      * AssignExpression constructor.
      *
-     * @param TokenInterface      $name
+     * @param TokenInterface $name
      * @param ExpressionInterface $value
      */
     public function __construct(
-        private readonly TokenInterface      $name,
-        private readonly ExpressionInterface $value
+        private TokenInterface $name,
+        private ExpressionInterface $value
     ) {
     }
 

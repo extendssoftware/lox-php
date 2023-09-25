@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Unary;
@@ -7,15 +8,15 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class UnaryExpression implements ExpressionInterface
+readonly class UnaryExpression implements ExpressionInterface
 {
     /**
      * UnaryExpression constructor.
      *
-     * @param TokenInterface      $operator
+     * @param TokenInterface $operator
      * @param ExpressionInterface $right
      */
-    public function __construct(private readonly TokenInterface $operator, private readonly ExpressionInterface $right)
+    public function __construct(private TokenInterface $operator, private ExpressionInterface $right)
     {
     }
 

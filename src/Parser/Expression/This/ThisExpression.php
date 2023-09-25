@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\This;
@@ -7,14 +8,14 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class ThisExpression implements ExpressionInterface
+readonly class ThisExpression implements ExpressionInterface
 {
     /**
      * ThisExpression constructor.
      *
      * @param TokenInterface $keyword
      */
-    public function __construct(private readonly TokenInterface $keyword)
+    public function __construct(private TokenInterface $keyword)
     {
     }
 

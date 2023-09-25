@@ -1,26 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Scanner\Token;
 
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
+
 use function str_pad;
 
-class Token implements TokenInterface
+readonly class Token implements TokenInterface
 {
     /**
      * Token constructor.
      *
      * @param TokenType $type
-     * @param int       $line
-     * @param int       $column
-     * @param mixed     $lexeme
+     * @param int $line
+     * @param int $column
+     * @param mixed $lexeme
      */
     public function __construct(
-        private readonly TokenType $type,
-        private readonly int       $line,
-        private readonly int       $column,
-        private readonly mixed     $lexeme
+        private TokenType $type,
+        private int $line,
+        private int $column,
+        private mixed $lexeme
     ) {
     }
 

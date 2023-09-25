@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\Function;
@@ -8,15 +9,15 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class FunctionStatement implements StatementInterface
+readonly class FunctionStatement implements StatementInterface
 {
     /**
      * FunctionStatement constructor.
      *
-     * @param TokenInterface     $name
+     * @param TokenInterface $name
      * @param FunctionExpression $function
      */
-    public function __construct(readonly private TokenInterface $name, readonly private FunctionExpression $function)
+    public function __construct(private TokenInterface $name, private FunctionExpression $function)
     {
     }
 

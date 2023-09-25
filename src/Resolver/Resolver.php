@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Resolver;
@@ -39,19 +40,17 @@ use SplDoublyLinkedList;
 class Resolver implements ResolverInterface
 {
     /**
-     * Scopes.
-     *
-     * @var SplDoublyLinkedList<ArrayObject<string, boolean>>
-     */
-    private SplDoublyLinkedList $scopes;
-
-    /**
      * Current function type.
      *
      * @var FunctionType
      */
     protected FunctionType $currentFunction = FunctionType::NONE;
-
+    /**
+     * Scopes.
+     *
+     * @var SplDoublyLinkedList<ArrayObject<string, boolean>>
+     */
+    private SplDoublyLinkedList $scopes;
     /**
      * Current class type.
      *
@@ -72,11 +71,57 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
+    public function visitArrayExpression(ArrayExpression $expression): null
+    {
+        foreach ($expression->getArguments() as $argument) {
+            $this->resolve($argument);
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function resolve(ExpressionInterface|StatementInterface $statement): ResolverInterface
     {
         $statement->accept($this);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitAssignExpression(AssignExpression $expression): null
+    {
+        $this->resolve($expression->getValue());
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitBinaryExpression(BinaryExpression $expression): null
+    {
+        $this
+            ->resolve($expression->getLeft())
+            ->resolve($expression->getRight());
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitCallExpression(CallExpression $expression): null
+    {
+        $this
+            ->resolve($expression->getCallee())
+            ->resolveAll($expression->getArguments());
+
+        return null;
     }
 
     /**
@@ -94,64 +139,101 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitArrayExpression(ArrayExpression $expression): mixed
-    {
-        foreach ($expression->getArguments() as $argument) {
-            $this->resolve($argument);
-        }
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitAssignExpression(AssignExpression $expression): mixed
-    {
-        $this->resolve($expression->getValue());
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitBinaryExpression(BinaryExpression $expression): mixed
-    {
-        $this
-            ->resolve($expression->getLeft())
-            ->resolve($expression->getRight());
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitCallExpression(CallExpression $expression): mixed
-    {
-        $this
-            ->resolve($expression->getCallee())
-            ->resolveAll($expression->getArguments());
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function visitFunctionExpression(FunctionExpression $expression): mixed
+    public function visitFunctionExpression(FunctionExpression $expression): null
     {
         $this->resolveFunction($expression, FunctionType::METHOD);
 
         return null;
     }
 
+    /**
+     * Resolve function.
+     *
+     * @param FunctionExpression $expression
+     * @param FunctionType $type
+     *
+     * @return void
+     * @throws LoxPHPExceptionInterface
+     */
+    private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
+    {
+        $enclosingFunction = $this->currentFunction;
+        $this->currentFunction = $type;
+
+        $this->beginScope();
+        foreach ($expression->getParameters() as $parameter) {
+            $this->declare($parameter);
+            $this->define($parameter);
+        }
+
+        $this->resolveAll($expression->getBody());
+        $this->endScope();
+
+        $this->currentFunction = $enclosingFunction;
+    }
+
+    /**
+     * Begin new scope.
+     *
+     * @return void
+     */
+    private function beginScope(): void
+    {
+        $this->scopes->push(new ArrayObject());
+    }
+
+    /**
+     * Declare variable as not initialized.
+     *
+     * @param TokenInterface $name
+     *
+     * @return void
+     * @throws CompileError
+     */
+    private function declare(TokenInterface $name): void
+    {
+        if (!$this->scopes->isEmpty()) {
+            $scope = $this->scopes->top();
+            if ($scope->offsetExists($name->getLexeme())) {
+                throw new CompileError(
+                    'Already a variable with this name in this scope.',
+                    $name->getLine(),
+                    $name->getColumn()
+                );
+            }
+
+            $scope->offsetSet($name->getLexeme(), false);
+        }
+    }
+
+    /**
+     * Define variable as initialized.
+     *
+     * @param TokenInterface $name
+     *
+     * @return void
+     */
+    private function define(TokenInterface $name): void
+    {
+        if (!$this->scopes->isEmpty()) {
+            $this->scopes->top()->offsetSet($name->getLexeme(), true);
+        }
+    }
+
+    /**
+     * End current scope.
+     *
+     * @return void
+     */
+    private function endScope(): void
+    {
+        $this->scopes->pop();
+    }
 
     /**
      * @inheritDoc
      */
-    public function visitGetExpression(GetExpression $expression): mixed
+    public function visitGetExpression(GetExpression $expression): null
     {
         $this->resolve($expression->getObject());
 
@@ -161,7 +243,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitGroupingExpression(GroupingExpression $expression): mixed
+    public function visitGroupingExpression(GroupingExpression $expression): null
     {
         $this->resolve($expression->getExpression());
 
@@ -171,7 +253,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitLiteralExpression(LiteralExpression $expression): mixed
+    public function visitLiteralExpression(LiteralExpression $expression): null
     {
         return null;
     }
@@ -179,7 +261,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitLogicalExpression(LogicalExpression $expression): mixed
+    public function visitLogicalExpression(LogicalExpression $expression): null
     {
         $this
             ->resolve($expression->getLeft())
@@ -191,7 +273,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitSetExpression(SetExpression $expression): mixed
+    public function visitSetExpression(SetExpression $expression): null
     {
         $this
             ->resolve($expression->getValue())
@@ -203,7 +285,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitSuperExpression(SuperExpression $expression): mixed
+    public function visitSuperExpression(SuperExpression $expression): null
     {
         $name = $expression->getMethod();
         if ($this->currentClass === ClassType::NONE) {
@@ -222,7 +304,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitThisExpression(ThisExpression $expression): mixed
+    public function visitThisExpression(ThisExpression $expression): null
     {
         $keyword = $expression->getKeyword();
         if ($this->currentClass === ClassType::NONE) {
@@ -235,7 +317,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitTypeofExpression(TypeofExpression $expression): mixed
+    public function visitTypeofExpression(TypeofExpression $expression): null
     {
         $this->resolve($expression->getOperand());
 
@@ -245,7 +327,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitUnaryExpression(UnaryExpression $expression): mixed
+    public function visitUnaryExpression(UnaryExpression $expression): null
     {
         $this->resolve($expression->getRight());
 
@@ -255,7 +337,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitVariableExpression(VariableExpression $expression): mixed
+    public function visitVariableExpression(VariableExpression $expression): null
     {
         $name = $expression->getName();
         if (!$this->scopes->isEmpty() &&
@@ -274,7 +356,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitBlockStatement(BlockStatement $statement): mixed
+    public function visitBlockStatement(BlockStatement $statement): null
     {
         $this->beginScope();
         $this->resolveAll($statement->getStatements());
@@ -286,7 +368,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitClassStatement(ClassStatement $statement): mixed
+    public function visitClassStatement(ClassStatement $statement): null
     {
         $enclosingClass = $this->currentClass;
         $this->currentClass = ClassType::INSTANCE;
@@ -333,7 +415,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitExpressionStatement(ExpressionStatement $statement): mixed
+    public function visitExpressionStatement(ExpressionStatement $statement): null
     {
         $this->resolve($statement->getExpression());
 
@@ -343,7 +425,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitFunctionStatement(FunctionStatement $statement): mixed
+    public function visitFunctionStatement(FunctionStatement $statement): null
     {
         // Declare and define function eagerly to allow function recursion.
         $this->declare($statement->getName());
@@ -357,7 +439,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitIfStatement(IfStatement $statement): mixed
+    public function visitIfStatement(IfStatement $statement): null
     {
         $this
             ->resolve($statement->getCondition())
@@ -374,7 +456,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitReturnStatement(ReturnStatement $statement): mixed
+    public function visitReturnStatement(ReturnStatement $statement): null
     {
         $name = $statement->getName();
         if ($this->currentFunction === FunctionType::NONE) {
@@ -400,7 +482,7 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitVariableStatement(VariableStatement $statement): mixed
+    public function visitVariableStatement(VariableStatement $statement): null
     {
         $name = $statement->getName();
         $this->declare($name);
@@ -418,96 +500,12 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function visitWhileStatement(WhileStatement $statement): mixed
+    public function visitWhileStatement(WhileStatement $statement): null
     {
         $this
             ->resolve($statement->getCondition())
             ->resolve($statement->getBody());
 
         return null;
-    }
-
-    /**
-     * Begin new scope.
-     *
-     * @return void
-     */
-    private function beginScope(): void
-    {
-        $this->scopes->push(new ArrayObject());
-    }
-
-    /**
-     * End current scope.
-     *
-     * @return void
-     */
-    private function endScope(): void
-    {
-        $this->scopes->pop();
-    }
-
-    /**
-     * Declare variable as not initialized.
-     *
-     * @param TokenInterface $name
-     *
-     * @return void
-     * @throws CompileError
-     */
-    private function declare(TokenInterface $name): void
-    {
-        if (!$this->scopes->isEmpty()) {
-            $scope = $this->scopes->top();
-            if ($scope->offsetExists($name->getLexeme())) {
-                throw new CompileError(
-                    'Already a variable with this name in this scope.',
-                    $name->getLine(),
-                    $name->getColumn()
-                );
-            }
-
-            $scope->offsetSet($name->getLexeme(), false);
-        }
-    }
-
-    /**
-     * Define variable as initialized.
-     *
-     * @param TokenInterface $name
-     *
-     * @return void
-     */
-    private function define(TokenInterface $name): void
-    {
-        if (!$this->scopes->isEmpty()) {
-            $this->scopes->top()->offsetSet($name->getLexeme(), true);
-        }
-    }
-
-    /**
-     * Resolve function.
-     *
-     * @param FunctionExpression $expression
-     * @param FunctionType       $type
-     *
-     * @return void
-     * @throws LoxPHPExceptionInterface
-     */
-    private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
-    {
-        $enclosingFunction = $this->currentFunction;
-        $this->currentFunction = $type;
-
-        $this->beginScope();
-        foreach ($expression->getParameters() as $parameter) {
-            $this->declare($parameter);
-            $this->define($parameter);
-        }
-
-        $this->resolveAll($expression->getBody());
-        $this->endScope();
-
-        $this->currentFunction = $enclosingFunction;
     }
 }

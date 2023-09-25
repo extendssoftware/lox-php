@@ -11,21 +11,21 @@ use ExtendsSoftware\LoxPHP\Resolver\ResolverInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Scanner;
 use ExtendsSoftware\LoxPHP\Scanner\ScannerInterface;
 
-class LoxPHP implements LoxPHPInterface
+readonly class LoxPHP implements LoxPHPInterface
 {
     /**
      * Lox constructor.
      *
-     * @param ScannerInterface     $scanner
-     * @param ParserInterface      $parser
-     * @param ResolverInterface    $resolver
+     * @param ScannerInterface $scanner
+     * @param ParserInterface $parser
+     * @param ResolverInterface $resolver
      * @param InterpreterInterface $interpreter
      */
     public function __construct(
-        readonly private ScannerInterface     $scanner = new Scanner(),
-        readonly private ParserInterface      $parser = new Parser(),
-        readonly private ResolverInterface    $resolver = new Resolver(),
-        readonly private InterpreterInterface $interpreter = new Interpreter()
+        private ScannerInterface $scanner = new Scanner(),
+        private ParserInterface $parser = new Parser(),
+        private ResolverInterface $resolver = new Resolver(),
+        private InterpreterInterface $interpreter = new Interpreter()
     ) {
     }
 

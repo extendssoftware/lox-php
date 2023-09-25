@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Environment\Global;
@@ -6,6 +7,7 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Environment\Global;
 use ExtendsSoftware\LoxPHP\Interpreter\Environment\EnvironmentInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
+
 use function array_key_exists;
 
 class GlobalEnvironment implements EnvironmentInterface
@@ -14,11 +16,11 @@ class GlobalEnvironment implements EnvironmentInterface
      * Environment constructor.
      *
      * @param EnvironmentInterface|null $enclosing
-     * @param array<string, mixed>      $values
+     * @param array<string, mixed> $values
      */
     public function __construct(
         readonly private ?EnvironmentInterface $enclosing = null,
-        protected array                        $values = []
+        protected array $values = []
     ) {
     }
 

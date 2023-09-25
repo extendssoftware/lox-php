@@ -11,14 +11,6 @@ use ExtendsSoftware\LoxPHP\Scanner\ScannerInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test of class LoxPHP.
- *
- * @package ExtendsSoftware\LoxPHP
- * @author  Vincent van Dijk <vincent@extends.nl>
- * @version 0.1.0
- * @see     https://github.com/extendssoftware/lox-php
- */
 class LoxTest extends TestCase
 {
     /**

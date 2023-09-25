@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
@@ -23,7 +24,7 @@ interface InterpreterInterface
      * Execute block of statements.
      *
      * @param array<StatementInterface> $statements
-     * @param EnvironmentInterface      $environment
+     * @param EnvironmentInterface $environment
      *
      * @return InterpreterInterface
      * @throws LoxPHPExceptionInterface

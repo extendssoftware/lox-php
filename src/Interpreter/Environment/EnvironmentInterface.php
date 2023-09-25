@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Environment;
@@ -22,7 +23,7 @@ interface EnvironmentInterface
      * Define environment variable.
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return EnvironmentInterface
      */
@@ -32,7 +33,7 @@ interface EnvironmentInterface
      * Assign existing environment variable.
      *
      * @param TokenInterface $name
-     * @param mixed          $value
+     * @param mixed $value
      *
      * @return void
      * @throws RuntimeError Undefined variable.

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Grouping;
@@ -6,14 +7,14 @@ namespace ExtendsSoftware\LoxPHP\Parser\Expression\Grouping;
 use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 
-class GroupingExpression implements ExpressionInterface
+readonly class GroupingExpression implements ExpressionInterface
 {
     /**
      * GroupingExpression constructor.
      *
      * @param ExpressionInterface $expression
      */
-    public function __construct(private readonly ExpressionInterface $expression)
+    public function __construct(private ExpressionInterface $expression)
     {
     }
 

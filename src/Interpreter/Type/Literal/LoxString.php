@@ -4,6 +4,7 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use Closure;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
+
 use function abs;
 use function array_map;
 use function explode;

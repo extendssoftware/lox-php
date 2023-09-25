@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Call;
@@ -7,19 +8,19 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class CallExpression implements ExpressionInterface
+readonly class CallExpression implements ExpressionInterface
 {
     /**
      * CallExpression constructor.
      *
-     * @param ExpressionInterface        $callee
-     * @param TokenInterface             $paren
+     * @param ExpressionInterface $callee
+     * @param TokenInterface $paren
      * @param array<ExpressionInterface> $arguments
      */
     public function __construct(
-        private readonly ExpressionInterface $callee,
-        private readonly TokenInterface      $paren,
-        private readonly array               $arguments
+        private ExpressionInterface $callee,
+        private TokenInterface $paren,
+        private array $arguments
     ) {
     }
 

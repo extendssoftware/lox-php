@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
@@ -6,6 +7,7 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 use ExtendsSoftware\LoxPHP\Interpreter\InterpreterInterface;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Function\LoxFunction;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
+
 use function abs;
 use function array_filter;
 use function array_map;

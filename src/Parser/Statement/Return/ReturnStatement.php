@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\Return;
@@ -8,17 +9,17 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class ReturnStatement implements StatementInterface
+readonly class ReturnStatement implements StatementInterface
 {
     /**
      * ReturnStatement constructor.
      *
-     * @param TokenInterface           $name
+     * @param TokenInterface $name
      * @param ExpressionInterface|null $value
      */
     public function __construct(
-        private readonly TokenInterface       $name,
-        private readonly ?ExpressionInterface $value = null
+        private TokenInterface $name,
+        private ?ExpressionInterface $value = null
     ) {
     }
 

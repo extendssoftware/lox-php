@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\Variable;
@@ -8,17 +9,17 @@ use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class VariableStatement implements StatementInterface
+readonly class VariableStatement implements StatementInterface
 {
     /**
      * VariableStatement constructor.
      *
-     * @param TokenInterface           $name
+     * @param TokenInterface $name
      * @param ExpressionInterface|null $initializer
      */
     public function __construct(
-        private readonly TokenInterface       $name,
-        private readonly ?ExpressionInterface $initializer = null
+        private TokenInterface $name,
+        private ?ExpressionInterface $initializer = null
     ) {
     }
 

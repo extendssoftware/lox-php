@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Function;
@@ -11,24 +12,25 @@ use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\LoxInstance;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Function\FunctionExpression;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
+
 use function count;
 use function sprintf;
 
-class LoxFunction implements LoxCallableInterface
+readonly class LoxFunction implements LoxCallableInterface
 {
     /**
      * LoxFunction constructor.
      *
-     * @param FunctionExpression   $declaration
+     * @param FunctionExpression $declaration
      * @param EnvironmentInterface $closure
-     * @param bool                 $isInitializer
-     * @param TokenInterface|null  $name
+     * @param bool $isInitializer
+     * @param TokenInterface|null $name
      */
     public function __construct(
-        readonly private FunctionExpression   $declaration,
-        readonly private EnvironmentInterface $closure,
-        readonly private bool                 $isInitializer,
-        readonly private ?TokenInterface      $name = null
+        private FunctionExpression $declaration,
+        private EnvironmentInterface $closure,
+        private bool $isInitializer,
+        private ?TokenInterface $name = null
     ) {
     }
 

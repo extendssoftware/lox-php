@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Statement\If;
@@ -7,19 +8,19 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\Statement\StatementInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 
-class IfStatement implements StatementInterface
+readonly class IfStatement implements StatementInterface
 {
     /**
      * IfStatement constructor.
      *
-     * @param ExpressionInterface     $condition
-     * @param StatementInterface      $then
+     * @param ExpressionInterface $condition
+     * @param StatementInterface $then
      * @param StatementInterface|null $else
      */
     public function __construct(
-        private readonly ExpressionInterface $condition,
-        private readonly StatementInterface  $then,
-        private readonly ?StatementInterface $else = null
+        private ExpressionInterface $condition,
+        private StatementInterface $then,
+        private ?StatementInterface $else = null
     ) {
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Super;
@@ -7,7 +8,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class SuperExpression implements ExpressionInterface
+readonly class SuperExpression implements ExpressionInterface
 {
     /**
      * SuperExpression constructor.
@@ -15,7 +16,7 @@ class SuperExpression implements ExpressionInterface
      * @param TokenInterface $keyword
      * @param TokenInterface $method
      */
-    public function __construct(private readonly TokenInterface $keyword, private readonly TokenInterface $method)
+    public function __construct(private TokenInterface $keyword, private TokenInterface $method)
     {
     }
 

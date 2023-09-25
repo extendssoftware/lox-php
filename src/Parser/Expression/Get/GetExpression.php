@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Parser\Expression\Get;
@@ -7,15 +8,15 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\ExpressionInterface;
 use ExtendsSoftware\LoxPHP\Parser\VisitorInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
-class GetExpression implements ExpressionInterface
+readonly class GetExpression implements ExpressionInterface
 {
     /**
      * GetExpression constructor.
      *
      * @param ExpressionInterface $object
-     * @param TokenInterface      $name
+     * @param TokenInterface $name
      */
-    public function __construct(private readonly ExpressionInterface $object, private readonly TokenInterface $name)
+    public function __construct(private ExpressionInterface $object, private TokenInterface $name)
     {
     }
 

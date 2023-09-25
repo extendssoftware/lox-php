@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
@@ -7,6 +8,7 @@ use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Class\LoxClass;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use Stringable;
+
 use function array_key_exists;
 use function sprintf;
 
@@ -15,7 +17,7 @@ class LoxInstance implements Stringable
     /**
      * LoxInstance constructor.
      *
-     * @param LoxClass|null        $class
+     * @param LoxClass|null $class
      * @param array<string, mixed> $properties
      */
     public function __construct(readonly private ?LoxClass $class = null, private array $properties = [])
@@ -53,7 +55,7 @@ class LoxInstance implements Stringable
      * Set property value.
      *
      * @param TokenInterface $name
-     * @param mixed          $value
+     * @param mixed $value
      *
      * @return void
      */

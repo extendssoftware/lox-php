@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExtendsSoftware\LoxPHP\Interpreter;
@@ -12,7 +13,7 @@ interface LoxCallableInterface extends Stringable
      * Call callable.
      *
      * @param InterpreterInterface $interpreter
-     * @param array<int, mixed>    $arguments
+     * @param array<int, mixed> $arguments
      *
      * @return mixed
      * @throws LoxPHPExceptionInterface

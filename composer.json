@@ -35,11 +35,9 @@
   "scripts": {
     "test": [
       "@phpunit",
-      "@phpcs",
       "@phpstan"
     ],
     "phpunit": "phpunit",
-    "phpcs": "phpcs",
     "phpcbf": "phpcbf",
     "phpstan": "phpstan analyse"
   }

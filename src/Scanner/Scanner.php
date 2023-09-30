@@ -26,7 +26,7 @@ class Scanner implements ScannerInterface
      *
      * @var array<string>
      */
-    private array $characters;
+    private array $characters = [];
 
     /**
      * Line in source.
@@ -47,7 +47,7 @@ class Scanner implements ScannerInterface
      *
      * @var int
      */
-    private int $start;
+    private int $start = 0;
 
     /**
      * Current position in source.
@@ -114,7 +114,11 @@ class Scanner implements ScannerInterface
 
         $this->addToken(TokenType::EOF, 'EOF');
 
-        return $this->tokens;
+        $tokens = $this->tokens;
+
+        $this->reset();
+
+        return $tokens;
     }
 
     /**
@@ -364,5 +368,20 @@ class Scanner implements ScannerInterface
     private function peek(): string
     {
         return $this->characters[$this->position + 1] ?? "\0";
+    }
+
+    /**
+     * Reset scanner.
+     *
+     * @return void
+     */
+    private function reset(): void
+    {
+        $this->characters = [];
+        $this->line = 1;
+        $this->column = 1;
+        $this->start = 0;
+        $this->position = 0;
+        $this->tokens = [];
     }
 }

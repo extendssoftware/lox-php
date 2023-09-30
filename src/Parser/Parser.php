@@ -35,6 +35,7 @@ use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 use ExtendsSoftware\LoxPHP\Scanner\Token\Type\TokenType;
 
 use function array_values;
+use function count;
 use function sprintf;
 
 class Parser implements ParserInterface
@@ -51,7 +52,7 @@ class Parser implements ParserInterface
      *
      * @var array<int, TokenInterface>
      */
-    private array $tokens;
+    private array $tokens = [];
 
     /**
      * @inheritDoc
@@ -64,6 +65,8 @@ class Parser implements ParserInterface
         while (!$this->isAtEnd()) {
             $statements[] = $this->declaration();
         }
+
+        $this->reset();
 
         return $statements;
     }
@@ -795,5 +798,16 @@ class Parser implements ParserInterface
         $body = $this->statement();
 
         return new WhileStatement($condition, $body);
+    }
+
+    /**
+     * Reset parser.
+     *
+     * @return void
+     */
+    private function reset(): void
+    {
+        $this->current = 0;
+        $this->tokens = [];
     }
 }

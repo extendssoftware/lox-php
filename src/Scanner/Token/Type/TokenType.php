@@ -36,8 +36,6 @@ enum TokenType
     case GREATER_EQUAL;
     case LESS;
     case LESS_EQUAL;
-    case QUESTION_SEMICOLON;
-    case QUESTION_QUESTION;
 
     // Literals.
     case IDENTIFIER;
@@ -54,7 +52,6 @@ enum TokenType
     case IF;
     case NIL;
     case OR;
-    case PRINT;
     case RETURN;
     case SUPER;
     case THIS;
@@ -64,5 +61,4 @@ enum TokenType
     case WHILE;
 
     case EOF;
-    case COMMENT;
 }

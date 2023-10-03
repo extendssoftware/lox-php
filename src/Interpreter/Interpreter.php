@@ -326,7 +326,7 @@ class Interpreter implements InterpreterInterface, VisitorInterface
             }
         }
 
-        return $this->isTruthy($expression->getRight()->accept($this));
+        return $expression->getRight()->accept($this);
     }
 
     /**

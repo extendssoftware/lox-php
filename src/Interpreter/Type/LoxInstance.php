@@ -6,6 +6,7 @@ namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
 
 use ExtendsSoftware\LoxPHP\Interpreter\Error\RuntimeError;
 use ExtendsSoftware\LoxPHP\Interpreter\Type\Class\LoxClass;
+use ExtendsSoftware\LoxPHP\Interpreter\Type\Literal\LoxNil;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
 use function array_key_exists;
@@ -27,11 +28,12 @@ class LoxInstance
      * Get property value.
      *
      * @param TokenInterface $name
-     *
+     * @param bool|null $nullSafe
      * @return mixed
+     *
      * @throws RuntimeError
      */
-    public function get(TokenInterface $name): mixed
+    public function get(TokenInterface $name, ?bool $nullSafe = null): mixed
     {
         $lexeme = $name->getLexeme();
         if (array_key_exists($lexeme, $this->properties)) {
@@ -41,6 +43,10 @@ class LoxInstance
         $method = $this->class?->findMethod($lexeme);
         if ($method) {
             return $method->bind($this);
+        }
+
+        if ($nullSafe) {
+            return new LoxNil();
         }
 
         throw new RuntimeError(

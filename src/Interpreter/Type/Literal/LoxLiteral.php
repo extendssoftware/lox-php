@@ -21,13 +21,13 @@ abstract class LoxLiteral extends LoxInstance
     /**
      * @inheritDoc
      */
-    public function get(TokenInterface $name): mixed
+    public function get(TokenInterface $name, ?bool $nullSafe = null): mixed
     {
         return match ($name->getLexeme()) {
             'toString' => function (): LoxString {
                 return new LoxString((string)$this->value);
             },
-            default => parent::get($name),
+            default => parent::get($name, $nullSafe),
         };
     }
 

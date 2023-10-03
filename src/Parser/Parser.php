@@ -570,6 +570,12 @@ class Parser implements ParserInterface
                     $expression,
                     $this->consume(TokenType::IDENTIFIER, "Expect property name after '.'.")
                 );
+            } elseif ($this->match(TokenType::QUESTION_DOT)) {
+                $expression = new GetExpression(
+                    $expression,
+                    $this->consume(TokenType::IDENTIFIER, "Expect property name after '.'."),
+                    true
+                );
             } else {
                 break;
             }

@@ -2,7 +2,6 @@
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
-use Closure;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
 use function abs;
@@ -15,7 +14,7 @@ class LoxNumber extends LoxLiteral
     /**
      * @inheritDoc
      */
-    public function get(TokenInterface $name): Closure
+    public function get(TokenInterface $name, ?bool $nullSafe = null): mixed
     {
         return match ($name->getLexeme()) {
             'abs' => function (): LoxNumber {
@@ -30,7 +29,7 @@ class LoxNumber extends LoxLiteral
             'round' => function (): LoxNumber {
                 return new LoxNumber(round($this->value));
             },
-            default => parent::get($name),
+            default => parent::get($name, $nullSafe),
         };
     }
 }

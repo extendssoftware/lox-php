@@ -224,6 +224,11 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         if (!$callee instanceof LoxCallableInterface) {
+            $callee = $expression->getCallee();
+            if ($callee instanceof GetExpression && $callee->getNullSafe()) {
+                return new LoxNil();
+            }
+
             throw new RuntimeError('Can only call functions and classes.', $token->getLine(), $token->getColumn());
         }
 
@@ -271,7 +276,11 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         $name = $expression->getName();
         $object = $expression->getObject()->accept($this);
         if ($object instanceof LoxInstance) {
-            return $object->get($name);
+            return $object->get($name, $expression->getNullSafe());
+        }
+
+        if ($expression->getNullSafe()) {
+            return new LoxNil();
         }
 
         throw new RuntimeError('Only instances have properties.', $name->getLine(), $name->getColumn());

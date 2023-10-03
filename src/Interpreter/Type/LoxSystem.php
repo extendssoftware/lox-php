@@ -52,7 +52,7 @@ class LoxSystem extends LoxInstance
     /**
      * @inheritDoc
      */
-    public function get(TokenInterface $name): Closure
+    public function get(TokenInterface $name, ?bool $nullSafe = null): Closure
     {
         return match ($name->getLexeme()) {
             'version' => function (): LoxString {
@@ -79,7 +79,7 @@ class LoxSystem extends LoxInstance
 
                 return new LoxNil();
             },
-            default => parent::get($name),
+            default => parent::get($name, $nullSafe),
         };
     }
 

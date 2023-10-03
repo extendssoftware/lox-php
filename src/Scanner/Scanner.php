@@ -192,6 +192,11 @@ class Scanner implements ScannerInterface
             case '>':
                 $this->addToken($this->match('=') ? TokenType::GREATER_EQUAL : TokenType::GREATER);
                 break;
+            case '?':
+                if ($this->match('.')) {
+                    $this->addToken(TokenType::QUESTION_DOT);
+                }
+                break;
             case '/':
                 if ($this->match('/')) {
                     // Consume second slash for comment.

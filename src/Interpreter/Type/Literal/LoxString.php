@@ -2,7 +2,6 @@
 
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
-use Closure;
 use ExtendsSoftware\LoxPHP\Scanner\Token\TokenInterface;
 
 use function abs;
@@ -20,7 +19,7 @@ class LoxString extends LoxLiteral
     /**
      * @inheritDoc
      */
-    public function get(TokenInterface $name): Closure
+    public function get(TokenInterface $name, ?bool $nullSafe = null): mixed
     {
         return match ($name->getLexeme()) {
             'explode' => function ($separator = null): LoxArray {
@@ -65,7 +64,7 @@ class LoxString extends LoxLiteral
             'trim' => function (): LoxString {
                 return new LoxString(trim($this->value));
             },
-            default => parent::get($name),
+            default => parent::get($name, $nullSafe),
         };
     }
 }

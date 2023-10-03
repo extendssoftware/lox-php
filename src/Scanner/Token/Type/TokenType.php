@@ -36,6 +36,7 @@ enum TokenType
     case GREATER_EQUAL;
     case LESS;
     case LESS_EQUAL;
+    case QUESTION_DOT;
 
     // Literals.
     case IDENTIFIER;

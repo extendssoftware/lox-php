@@ -15,9 +15,13 @@ readonly class GetExpression implements ExpressionInterface
      *
      * @param ExpressionInterface $object
      * @param TokenInterface $name
+     * @param bool|null $nullSafe
      */
-    public function __construct(private ExpressionInterface $object, private TokenInterface $name)
-    {
+    public function __construct(
+        private ExpressionInterface $object,
+        private TokenInterface $name,
+        private ?bool $nullSafe = null
+    ) {
     }
 
     /**
@@ -46,5 +50,15 @@ readonly class GetExpression implements ExpressionInterface
     public function getName(): TokenInterface
     {
         return $this->name;
+    }
+
+    /**
+     * Get null safe boolean.
+     *
+     * @return bool|null
+     */
+    public function getNullSafe(): ?bool
+    {
+        return $this->nullSafe;
     }
 }

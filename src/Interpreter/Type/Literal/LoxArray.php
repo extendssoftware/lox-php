@@ -29,7 +29,7 @@ class LoxArray extends LoxLiteral
     /**
      * @inheritDoc
      */
-    public function get(TokenInterface $name): mixed
+    public function get(TokenInterface $name, ?bool $nullSafe = null): mixed
     {
         return match ($name->getLexeme()) {
             'count' => function (): LoxNumber {
@@ -126,7 +126,7 @@ class LoxArray extends LoxLiteral
             'unshift' => function ($value) {
                 return new LoxNumber(array_unshift($this->value, $value));
             },
-            default => parent::get($name),
+            default => parent::get($name, $nullSafe),
         };
     }
 

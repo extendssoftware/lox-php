@@ -418,7 +418,7 @@ class Parser implements ParserInterface
                 $this->consume(TokenType::COLON, "Expect ':' after expression in ternary operator.");
             }
 
-            $else = $this->ternary();
+            $else = $this->expression();
             $expression = new TernaryExpression($expression, $then, $else);
         }
 

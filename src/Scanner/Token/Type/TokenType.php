@@ -20,12 +20,14 @@ enum TokenType
     case PLUS;
     case PLUS_EQUAL;
     case SEMICOLON;
+    case COLON;
     case SLASH;
     case SLASH_EQUAL;
     case STAR;
     case STAR_EQUAL;
     case MODULO;
     case MODULO_EQUAL;
+    case QUESTION;
 
     // One or two character tokens.
     case BANG;

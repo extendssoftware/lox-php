@@ -17,6 +17,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Ternary\TernaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
@@ -358,7 +359,7 @@ class Parser implements ParserInterface
      */
     private function assignment(): ExpressionInterface
     {
-        $expression = $this->or();
+        $expression = $this->ternary();
         if ($this->match(
             TokenType::EQUAL,
             TokenType::PLUS_EQUAL,
@@ -394,6 +395,31 @@ class Parser implements ParserInterface
             }
 
             throw new ParseError('Invalid assignment target.', $operator->getLine(), $operator->getColumn());
+        }
+
+        return $expression;
+    }
+
+    /**
+     * Ternary grammar rule.
+     *
+     * @return ExpressionInterface
+     * @throws ParseError
+     */
+    private function ternary(): ExpressionInterface
+    {
+        $expression = $this->or();
+
+        while ($this->match(TokenType::QUESTION)) {
+            if ($this->match(TokenType::COLON)) {
+                $then = null;
+            } else {
+                $then = $this->expression();
+                $this->consume(TokenType::COLON, "Expect ':' after expression in ternary operator.");
+            }
+
+            $else = $this->ternary();
+            $expression = new TernaryExpression($expression, $then, $else);
         }
 
         return $expression;

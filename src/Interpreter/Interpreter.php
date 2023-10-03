@@ -32,6 +32,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Ternary\TernaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
@@ -377,6 +378,19 @@ class Interpreter implements InterpreterInterface, VisitorInterface
         }
 
         return $method->bind($object);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitTernaryExpression(TernaryExpression $expression): mixed
+    {
+        $condition = $expression->getCondition()->accept($this);
+        if ($this->isTruthy($condition)) {
+            return $expression->getThen()?->accept($this) ?? $condition;
+        } else {
+            return $expression->getElse()->accept($this);
+        }
     }
 
     /**

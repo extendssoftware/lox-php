@@ -16,6 +16,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Ternary\TernaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
@@ -140,6 +141,16 @@ interface VisitorInterface
      * @throws LoxPHPExceptionInterface
      */
     public function visitSuperExpression(SuperExpression $expression): mixed;
+
+    /**
+     * Visit ternary expression.
+     *
+     * @param TernaryExpression $expression
+     *
+     * @return mixed
+     * @throws LoxPHPExceptionInterface
+     */
+    public function visitTernaryExpression(TernaryExpression $expression): mixed;
 
     /**
      * Visit this expression.

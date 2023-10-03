@@ -18,6 +18,7 @@ use ExtendsSoftware\LoxPHP\Parser\Expression\Literal\LiteralExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Logical\LogicalExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Set\SetExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Super\SuperExpression;
+use ExtendsSoftware\LoxPHP\Parser\Expression\Ternary\TernaryExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\This\ThisExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Typeof\TypeofExpression;
 use ExtendsSoftware\LoxPHP\Parser\Expression\Unary\UnaryExpression;
@@ -297,6 +298,20 @@ class Resolver implements ResolverInterface
                 $name->getColumn()
             );
         }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitTernaryExpression(TernaryExpression $expression): null
+    {
+        $this->resolve($expression->getCondition());
+        if ($expression->getThen() instanceof ExpressionInterface) {
+            $this->resolve($expression->getThen());
+        }
+        $this->resolve($expression->getElse());
 
         return null;
     }

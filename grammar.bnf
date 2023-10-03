@@ -30,7 +30,7 @@ term                ::= factor (("-" | "+") factor)*
 factor              ::= typeof (("/" | "*") typeof)*
 typeof              ::= "typeof" unary | unary
 unary               ::= ("!" | "-") unary | call
-call                ::= primary ("(" arguments? ")" | "." IDENTIFIER)*
+call                ::= primary ("(" arguments? ")" | ("?." | ".") IDENTIFIER)*
 primary             ::= "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
                         | "[" arguments? "]" | "super" "." IDENTIFIER | "fun" function_literal ";"
 

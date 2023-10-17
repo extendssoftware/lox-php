@@ -13,12 +13,4 @@ class LoxNil extends LoxLiteral
     {
         parent::__construct(null);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function __toString(): string
-    {
-        return 'nil';
-    }
 }

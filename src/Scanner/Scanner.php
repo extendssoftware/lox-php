@@ -208,18 +208,19 @@ class Scanner implements ScannerInterface
                         $this->consume();
                     }
                 } elseif ($this->match('*')) {
-                    // Consume asterisk slash for comment.
-                    $this->consume();
-
                     // A multiline comment goes until the closing asterisk + forward slash combination.
-                    // @phpstan-ignore-next-line
-                    while (!($this->match('*') && $this->match('/')) && $this->hasMore()) {
+                    while ($this->hasMore()) {
+                        if ($this->current() === '*' && $this->peek() === '/') {
+                            $this->consume();
+                            $this->consume();
+
+                            break 2;
+                        }
+
                         $this->consume();
                     }
 
-                    if (!$this->hasMore()) {
-                        throw new SyntaxError('Unterminated comment', $this->line, $this->column);
-                    }
+                    throw new SyntaxError('Unterminated comment', $this->line, $this->column);
                 } elseif ($this->match('=')) {
                     $this->addToken(TokenType::SLASH_EQUAL);
                 } else {

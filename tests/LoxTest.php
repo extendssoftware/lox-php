@@ -37,7 +37,7 @@ class LoxTest extends TestCase
         $parser = $this->createMock(ParserInterface::class);
         $parser
             ->expects($this->once())
-            ->method('parse')
+            ->method('parseStatements')
             ->with([$token, $token])
             ->willReturn([$statement, $statement]);
 

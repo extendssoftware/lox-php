@@ -35,7 +35,7 @@ readonly class LoxPHP implements LoxPHPInterface
     public function run(string $source): void
     {
         $tokens = $this->scanner->scan($source);
-        $statements = $this->parser->parse($tokens);
+        $statements = $this->parser->parseStatements($tokens);
 
         $this->resolver->resolveAll($statements);
         $this->interpreter->execute($statements);

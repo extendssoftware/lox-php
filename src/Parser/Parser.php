@@ -58,7 +58,7 @@ class Parser implements ParserInterface
     /**
      * @inheritDoc
      */
-    public function parse(array $tokens): array
+    public function parseStatements(array $tokens): array
     {
         $this->tokens = array_values($tokens);
 
@@ -70,6 +70,25 @@ class Parser implements ParserInterface
         $this->reset();
 
         return $statements;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseExpression(array $tokens): ExpressionInterface
+    {
+        $this->tokens = array_values($tokens);
+
+        $expression = $this->expression();
+        if (!$this->isAtEnd()) {
+            $current = $this->current();
+
+            throw new ParseError('Expect a single expression.', $current->getLine(), $current->getColumn());
+        }
+
+        $this->reset();
+
+        return $expression;
     }
 
     /**

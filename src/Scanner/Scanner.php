@@ -228,7 +228,8 @@ class Scanner implements ScannerInterface
                 }
                 break;
             case '"':
-                while ($this->current() !== '"' && $this->hasMore()) {
+            case "'":
+                while ($this->current() !== $character && $this->hasMore()) {
                     if ($this->current() === '\\') {
                         $peek = $this->peek();
                         if (isset($this->sequences[$peek])) {

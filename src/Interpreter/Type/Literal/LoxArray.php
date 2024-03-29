@@ -44,6 +44,17 @@ class LoxArray extends LoxLiteral
 
                 return new LoxNil();
             },
+            'find' => function (InterpreterInterface $interpreter, $callback): mixed {
+                foreach ($this->value as $value) {
+                    if ($callback instanceof LoxFunction) {
+                        if ($interpreter->isTruthy($callback->call($interpreter, [$value]))) {
+                            return $value;
+                        }
+                    }
+                }
+
+                return new LoxNil();
+            },
             'filter' => function (InterpreterInterface $interpreter, $callback = null): LoxArray {
                 $values = array_filter($this->value, function ($value) use ($interpreter, $callback) {
                     if ($callback instanceof LoxFunction) {

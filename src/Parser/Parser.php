@@ -224,7 +224,7 @@ class Parser implements ParserInterface
      * Consume token.
      *
      * @param TokenType $expected
-     * @param string $reason
+     * @param string    $reason
      *
      * @return TokenInterface
      * @throws ParseError When current token is not of expected type.
@@ -283,9 +283,21 @@ class Parser implements ParserInterface
         }
 
         $this->consume(TokenType::RIGHT_PAREN, sprintf("Expect ')' after %s parameters.", $type));
-        $this->consume(TokenType::LEFT_BRACE, sprintf("Expect '{' before %s body.", $type));
 
-        $body = $this->blockStatement();
+        if ($type === 'arrow function') {
+            $this->consume(TokenType::EQUAL_GREATER, sprintf("Expect '=>' before %s body.", $type));
+
+            $body = [
+                new ReturnStatement(
+                    $this->previous(),
+                    $this->expression(),
+                )
+            ];
+        } else {
+            $this->consume(TokenType::LEFT_BRACE, sprintf("Expect '{' before %s body.", $type));
+
+            $body = $this->blockStatement();
+        }
 
         return new FunctionExpression($parameters, $body);
     }
@@ -695,6 +707,10 @@ class Parser implements ParserInterface
 
         if ($this->match(TokenType::FUN)) {
             return $this->functionBody('anonymous function');
+        }
+
+        if ($this->match(TokenType::FN)) {
+            return $this->functionBody('arrow function');
         }
 
         $token = $this->current();

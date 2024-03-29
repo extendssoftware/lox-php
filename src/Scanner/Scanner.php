@@ -75,6 +75,7 @@ class Scanner implements ScannerInterface
         'false' => TokenType::FALSE,
         'for' => TokenType::FOR,
         'fun' => TokenType::FUN,
+        'fn' => TokenType::FN,
         'if' => TokenType::IF,
         'nil' => TokenType::NIL,
         'or' => TokenType::OR,
@@ -187,7 +188,13 @@ class Scanner implements ScannerInterface
                 $this->addToken($this->match('=') ? TokenType::BANG_EQUAL : TokenType::BANG);
                 break;
             case '=':
-                $this->addToken($this->match('=') ? TokenType::EQUAL_EQUAL : TokenType::EQUAL);
+                if ($this->match('=')) {
+                    $this->addToken(TokenType::EQUAL_EQUAL);
+                } elseif ($this->match('>')) {
+                    $this->addToken(TokenType::EQUAL_GREATER);
+                } else {
+                    $this->addToken(TokenType::EQUAL);
+                }
                 break;
             case '<':
                 $this->addToken($this->match('=') ? TokenType::LESS_EQUAL : TokenType::LESS);
@@ -314,7 +321,7 @@ class Scanner implements ScannerInterface
      * Add token.
      *
      * @param TokenType $type
-     * @param mixed $lexeme
+     * @param mixed     $lexeme
      *
      * @return void
      */

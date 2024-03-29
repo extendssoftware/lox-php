@@ -34,6 +34,7 @@ enum TokenType
     case BANG_EQUAL;
     case EQUAL;
     case EQUAL_EQUAL;
+    case EQUAL_GREATER;
     case GREATER;
     case GREATER_EQUAL;
     case LESS;
@@ -51,6 +52,7 @@ enum TokenType
     case ELSE;
     case FALSE;
     case FUN;
+    case FN;
     case FOR;
     case IF;
     case NIL;

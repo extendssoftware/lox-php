@@ -72,6 +72,28 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
+    public function resolve(ExpressionInterface|StatementInterface $statement): ResolverInterface
+    {
+        $statement->accept($this);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resolveAll(array $statements): ResolverInterface
+    {
+        foreach ($statements as $statement) {
+            $this->resolve($statement);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function visitArrayExpression(ArrayExpression $expression): null
     {
         foreach ($expression->getArguments() as $argument) {
@@ -79,16 +101,6 @@ class Resolver implements ResolverInterface
         }
 
         return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolve(ExpressionInterface|StatementInterface $statement): ResolverInterface
-    {
-        $statement->accept($this);
-
-        return $this;
     }
 
     /**
@@ -128,107 +140,11 @@ class Resolver implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function resolveAll(array $statements): ResolverInterface
-    {
-        foreach ($statements as $statement) {
-            $this->resolve($statement);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function visitFunctionExpression(FunctionExpression $expression): null
     {
         $this->resolveFunction($expression, FunctionType::METHOD);
 
         return null;
-    }
-
-    /**
-     * Resolve function.
-     *
-     * @param FunctionExpression $expression
-     * @param FunctionType $type
-     *
-     * @return void
-     * @throws LoxPHPExceptionInterface
-     */
-    private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
-    {
-        $enclosingFunction = $this->currentFunction;
-        $this->currentFunction = $type;
-
-        $this->beginScope();
-        foreach ($expression->getParameters() as $parameter) {
-            $this->declare($parameter);
-            $this->define($parameter);
-        }
-
-        $this->resolveAll($expression->getBody());
-        $this->endScope();
-
-        $this->currentFunction = $enclosingFunction;
-    }
-
-    /**
-     * Begin new scope.
-     *
-     * @return void
-     */
-    private function beginScope(): void
-    {
-        $this->scopes->push(new ArrayObject());
-    }
-
-    /**
-     * Declare variable as not initialized.
-     *
-     * @param TokenInterface $name
-     *
-     * @return void
-     * @throws CompileError
-     */
-    private function declare(TokenInterface $name): void
-    {
-        if (!$this->scopes->isEmpty()) {
-            $scope = $this->scopes->top();
-            if ($scope->offsetExists($name->getLexeme())) {
-                throw new CompileError(
-                    'Already a variable with this name in this scope.',
-                    $name->getLine(),
-                    $name->getColumn()
-                );
-            }
-
-            $scope->offsetSet($name->getLexeme(), false);
-        }
-    }
-
-    /**
-     * Define variable as initialized.
-     *
-     * @param TokenInterface $name
-     *
-     * @return void
-     */
-    private function define(TokenInterface $name): void
-    {
-        if (!$this->scopes->isEmpty()) {
-            $this->scopes->top()->offsetSet($name->getLexeme(), true);
-        }
-    }
-
-    /**
-     * End current scope.
-     *
-     * @return void
-     */
-    private function endScope(): void
-    {
-        $this->scopes->pop();
     }
 
     /**
@@ -522,5 +438,89 @@ class Resolver implements ResolverInterface
             ->resolve($statement->getBody());
 
         return null;
+    }
+
+    /**
+     * Resolve function.
+     *
+     * @param FunctionExpression $expression
+     * @param FunctionType $type
+     *
+     * @return void
+     * @throws LoxPHPExceptionInterface
+     */
+    private function resolveFunction(FunctionExpression $expression, FunctionType $type): void
+    {
+        $enclosingFunction = $this->currentFunction;
+        $this->currentFunction = $type;
+
+        $this->beginScope();
+        foreach ($expression->getParameters() as $parameter) {
+            $this->declare($parameter);
+            $this->define($parameter);
+        }
+
+        $this->resolveAll($expression->getBody());
+        $this->endScope();
+
+        $this->currentFunction = $enclosingFunction;
+    }
+
+    /**
+     * Begin new scope.
+     *
+     * @return void
+     */
+    private function beginScope(): void
+    {
+        $this->scopes->push(new ArrayObject());
+    }
+
+    /**
+     * Declare variable as not initialized.
+     *
+     * @param TokenInterface $name
+     *
+     * @return void
+     * @throws CompileError
+     */
+    private function declare(TokenInterface $name): void
+    {
+        if (!$this->scopes->isEmpty()) {
+            $scope = $this->scopes->top();
+            if ($scope->offsetExists($name->getLexeme())) {
+                throw new CompileError(
+                    'Already a variable with this name in this scope.',
+                    $name->getLine(),
+                    $name->getColumn()
+                );
+            }
+
+            $scope->offsetSet($name->getLexeme(), false);
+        }
+    }
+
+    /**
+     * Define variable as initialized.
+     *
+     * @param TokenInterface $name
+     *
+     * @return void
+     */
+    private function define(TokenInterface $name): void
+    {
+        if (!$this->scopes->isEmpty()) {
+            $this->scopes->top()->offsetSet($name->getLexeme(), true);
+        }
+    }
+
+    /**
+     * End current scope.
+     *
+     * @return void
+     */
+    private function endScope(): void
+    {
+        $this->scopes->pop();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type;
 
 use Closure;
@@ -14,9 +16,12 @@ use TypeError;
 
 use function fopen;
 use function fwrite;
+use function gettype;
 use function implode;
 use function is_resource;
 use function sprintf;
+
+use const PHP_EOL;
 
 class LoxSystem extends LoxInstance
 {

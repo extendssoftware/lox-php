@@ -9,7 +9,7 @@ interface LoxPHPInterface
     /**
      * LoxPHP version.
      */
-    public const VERSION = '0.1.0';
+    public const string VERSION = '0.1.0';
 
     /**
      * Run source code.

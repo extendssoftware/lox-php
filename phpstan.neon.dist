@@ -1,6 +1,5 @@
 parameters:
     level: 8
-    phpVersion: 80200
-    checkGenericClassInNonGenericObjectType: false
+    phpVersion: 80300
     paths:
         - src

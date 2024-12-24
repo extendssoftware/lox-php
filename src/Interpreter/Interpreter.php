@@ -54,6 +54,7 @@ use Throwable;
 
 use function array_merge;
 use function array_pop;
+use function count;
 use function fmod;
 use function implode;
 use function in_array;

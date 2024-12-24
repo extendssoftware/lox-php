@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtendsSoftware\LoxPHP\Interpreter\Type\Literal;
 
 use Closure;

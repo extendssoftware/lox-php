@@ -17,6 +17,7 @@ use function array_reverse;
 use function array_shift;
 use function array_slice;
 use function array_unshift;
+use function count;
 use function current;
 use function end;
 use function implode;
